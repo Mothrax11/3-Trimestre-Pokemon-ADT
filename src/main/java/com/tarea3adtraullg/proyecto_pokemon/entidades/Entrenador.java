@@ -3,6 +3,7 @@ package com.tarea3adtraullg.proyecto_pokemon.entidades;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,32 +37,50 @@ public class Entrenador implements Serializable {
     @Column(name = "nacionalidad")
     private String nacionalidad; // Nacionalidad del entrenador
 
+    @Column(name = "password")
+    private String contrasena; // Contraseña del entrenador
+
+    @Column(name = "fechaCreacion")
+    private String fechaCreacion; // Fecha de creación del carnet
+    
+    @Column(name = "tipoUsuario")
+    private String tipoUsr;
+
+    @Transient
+    private List<Combate> combatesEntrenador;
+    @Transient
+    private List<Torneo> torneos;
     @Transient
     private Carnet carnet; // Carnet del entrenador
-    @Transient
-    private String contrasena; // Contraseña del entrenador
-    @Transient
-    private String fechaCreacion; // Fecha de creación del carnet
-
-    /**
-     * Constructor sin parámetros.
-     */
-    public Entrenador() {
-    }
-
-    /**
-     * Constructor que inicializa los datos básicos del entrenador: nombre y
-     * nacionalidad. Al crear un nuevo entrenador, también se genera un carnet
-     * con la fecha de creación actual.
-     *
-     * @param nombre       Nombre del entrenador.
-     * @param nacionalidad Nacionalidad del entrenador.
-     */
-    public Entrenador(String nombre, String nacionalidad) {
-        this.nombre = nombre;
-        this.nacionalidad = nacionalidad;
-        this.fechaCreacion = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-    }
+    
+    
+        /**
+         * Constructor sin parámetros.
+         */
+        public Entrenador() {
+        }
+    
+        /**
+         * Constructor que inicializa los datos básicos del entrenador: nombre y
+         * nacionalidad. Al crear un nuevo entrenador, también se genera un carnet
+         * con la fecha de creación actual.
+         *
+         * @param nombre       Nombre del entrenador.
+         * @param nacionalidad Nacionalidad del entrenador.
+         */
+        public Entrenador(String nombre, String nacionalidad) {
+            this.nombre = nombre;
+            this.nacionalidad = nacionalidad;
+            this.fechaCreacion = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        }
+    
+        public Entrenador(String nombre, String pass, String nacionalidad, String tipoUsr) {
+            this.nombre = nombre;
+            this.contrasena = pass;
+            this.nacionalidad = nacionalidad;
+            this.tipoUsr = tipoUsr;
+            this.fechaCreacion = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        }
 
     /**
      * Constructor que inicializa los datos básicos del entrenador: nombre,
@@ -71,12 +90,7 @@ public class Entrenador implements Serializable {
      * @param contrasena   Contraseña del entrenador.
      * @param nacionalidad Nacionalidad del entrenador.
      */
-    public Entrenador(String nombre, String contrasena, String nacionalidad) {
-        this.nombre = nombre;
-        this.contrasena = contrasena;
-        this.nacionalidad = nacionalidad;
-        this.fechaCreacion = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-    }
+   
 
     /**
      * Devuelve el ID único del entrenador.
