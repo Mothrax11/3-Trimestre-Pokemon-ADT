@@ -1,22 +1,22 @@
-package com.tarea3adtraullg.proyecto_pokemon.SERVICES;
+package com.tarea3adtraullg.proyecto_pokemon.services;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.tarea3adtraullg.proyecto_pokemon.entidades.Entrenador;
+
 import com.tarea3adtraullg.proyecto_pokemon.entidades.Torneo;
-import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoEntrenador;
+import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoTorneo;
 
 @Service
 public class TorneoServices {
     @Autowired
     private final RepoTorneo repoTorneo;
-    private static EntrenadorServices instancia;
+    private static TorneoServices instancia;
 
-    public static EntrenadorServices getInstancia(RepoEntrenador repoEntrenador) {
+    public static TorneoServices getInstancia(RepoTorneo repoTorneo) {
         if (instancia == null) {
-            instancia = new EntrenadorServices(repoEntrenador);
+            instancia = new TorneoServices(repoTorneo);
         }
         return instancia;
     }
@@ -26,7 +26,7 @@ public class TorneoServices {
     }
 
     public void crearTorneo(Torneo torneo) {
-        repoEntrenador.save(entrenador);
+        repoTorneo.save(torneo);
     }
 
     public void actualizarTorneo(long id, Torneo torneo) {
@@ -37,7 +37,7 @@ public class TorneoServices {
         repoTorneo.deleteById(id);
     }
 
-    public Entrenador obtenerTorneoPorId(long id) {
+    public Torneo obtenerTorneoPorId(long id) {
         return repoTorneo.findById(id).orElse(null);
     }
 

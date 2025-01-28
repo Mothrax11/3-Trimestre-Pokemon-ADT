@@ -1,85 +1,45 @@
-package com.proyectopokemonadt.SERVICES;
+package com.tarea3adtraullg.proyecto_pokemon.services;
 
-
-import com.proyectopokemonadt.DAO.CombateDAOImplementacion;
-import com.proyectopokemonadt.DTO.CombateDTO;
-import com.proyectopokemonadt.ENTIDADES.Combate;
-import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.tarea3adtraullg.proyecto_pokemon.entidades.Combate;
+import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoCombate;
 
+@Service
 public class CombateServices {
-    
+@Autowired
+    private final RepoCombate repoCombate;
     private static CombateServices instancia;
-    private CombateServices(){
-       
-    }
-    
-    private CombateDAOImplementacion combateDAOImplementacion = CombateDAOImplementacion.getInstance();
 
-    public static CombateServices getInstancia(){
+    public static CombateServices getInstancia(RepoCombate repoCombate){
         if (instancia == null) {
-            instancia = new CombateServices();
+            instancia = new CombateServices(repoCombate);
         }
         return instancia;
     }
 
-    public CombateServices(CombateDAOImplementacion combateDAOImplementacion) {
-        this.combateDAOImplementacion = combateDAOImplementacion;
+    private CombateServices(RepoCombate repoCombate){
+       this.repoCombate = repoCombate;
     }
 
-    public boolean crearCombate(CombateDTO combatedto) {
-        return combateDAOImplementacion.crearCombate(combatedto);
+    public void crearCombate(Combate combate) {
+        repoCombate.save(combate);
     }
 
-    public boolean eliminarCombatePorId(int id) {
-        return combateDAOImplementacion.eliminarCombatePorId(id);
+    public void eliminarCombatePorId(long id) {
+        repoCombate.deleteById(id);
     }
 
-    public boolean actualizarCombate(int idCombate, Combate combate) {
-        return combateDAOImplementacion.actualizarCombate(idCombate, combate);
+    public void actualizarCombate( Combate combate) {
+        repoCombate.save(combate);
     }
 
-    public Combate obtenerCombatePorId(int id) {
-        return combateDAOImplementacion.obtenerCombatePorId(id);
+    public Combate obtenerCombatePorId(long id) {
+        return repoCombate.findById(id).orElse(null);
     }
 
     public List<Combate> obtenerTodosLosCombates() {
-        return combateDAOImplementacion.obtenerTodosLosCombates();
-    }
-
-    public List<CombateDTO> obtenerTodosLosCombatesPorIdTorneo(int idTorneo) {
-        return mapearListaEntidadAListaCombateDTO(combateDAOImplementacion.obtenerTodosLosCombatesPorIdTorneo(idTorneo));
-    }
-
-     public static CombateDTO mapearEntidadACombateDTO(Combate combate) {
-        return new CombateDTO(
-                combate.getId(),
-                combate.getFecha(),
-                combate.getIdTorneo()
-        );
-    }
-
-    public static Combate mapearCombateDTOAEntidad(CombateDTO combateDTO) {
-        return new Combate(
-                combateDTO.getId(),
-                combateDTO.getFecha(),
-                combateDTO.getIdTorneo()
-        );
-    }
-
-    public static List<CombateDTO> mapearListaEntidadAListaCombateDTO(List<Combate> combates) {
-        List<CombateDTO> combateDTOs = new ArrayList<>();
-        for (Combate combate : combates) {
-            combateDTOs.add(mapearEntidadACombateDTO(combate));
-        }
-        return combateDTOs;
-    }
-
-    public static List<Combate> mapearListaCombateDTOAListaEntidad(List<CombateDTO> combateDTOs) {
-        List<Combate> combates = new ArrayList<>();
-        for (CombateDTO combateDTO : combateDTOs) {
-            combates.add(mapearCombateDTOAEntidad(combateDTO));
-        }
-        return combates;
+        return repoCombate.findAll();
     }
 }

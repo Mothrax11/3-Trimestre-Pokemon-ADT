@@ -5,10 +5,22 @@ import java.util.Scanner;
 import com.tarea3adtraullg.proyecto_pokemon.complementarias.ShowNations;
 
 public class RegistroAT {
+
     private Validaciones validaciones;
+    private static RegistroAT instance;
 
+    public RegistroAT(){
 
-    public RegistroAT(){}
+    }
+
+    public static RegistroAT getInstance(){
+        if(instance == null){
+            instance = new RegistroAT();
+            return instance;
+        }
+        return instance;
+    }
+
     
  public void registroDataAT(String nombreAT, String passAT, String rol, String nacAT) {
         Scanner sc = new Scanner(System.in);

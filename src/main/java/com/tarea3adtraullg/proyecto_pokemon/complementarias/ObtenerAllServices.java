@@ -2,33 +2,23 @@ package com.tarea3adtraullg.proyecto_pokemon.complementarias;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ObtenerAllServices {
 
-    private static ApplicationContext context;
-    private static ObtenerAllServices instance;
-
-    public ObtenerAllServices(){
-
-    }
-
-    public static ObtenerAllServices getInstance(){
-        if(instance == null){
-            return instance = new ObtenerAllServices();
-        }
-        return instance;
-    }
+    private ApplicationContext context;
 
     @Autowired
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        context = applicationContext;
+    public ObtenerAllServices(ApplicationContext applicationContext) {
+        this.context = applicationContext;
     }
 
-    public static <T> T getService(Class<T> clazz) {
+    public <T> T getService(Class<T> clazz) {
         return context.getBean(clazz);
     }
 
-    public static Object getService(String beanName) {
+    public Object getService(String beanName) {
         return context.getBean(beanName);
     }
 }

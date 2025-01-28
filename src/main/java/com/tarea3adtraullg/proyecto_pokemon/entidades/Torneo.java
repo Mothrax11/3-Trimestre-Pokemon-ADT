@@ -1,6 +1,12 @@
 package com.tarea3adtraullg.proyecto_pokemon.entidades;
 
+
 import java.io.Serializable;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 /**
  * Clase que representa un torneo en el sistema. Un torneo tiene un nombre,
@@ -9,16 +15,20 @@ import java.io.Serializable;
  * 
  * @author raullg97
  */
+@Entity
 public class Torneo implements Serializable {
-    private int id; // ID único del torneo
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Para que JPA genere el ID automáticamente
+    private long id; // ID único del torneo
+
     private String nombre; // Nombre del torneo
     private char codRegion; // Código de la región a la que pertenece el torneo
     private float puntosVictoria; // Puntos asignados por cada victoria
 
     /**
      * Constructor que inicializa el nombre, el código de región y los puntos de
-     * victoria
-     * para el torneo.
+     * victoria para el torneo.
      *
      * @param nombre         Nombre del torneo.
      * @param codRegion      Código de la región del torneo.
@@ -28,6 +38,12 @@ public class Torneo implements Serializable {
         this.nombre = nombre;
         this.codRegion = codRegion;
         this.puntosVictoria = puntosVictoria;
+    }
+
+    /**
+     * Constructor vacío (por JPA).
+     */
+    public Torneo() {
     }
 
     /**
@@ -44,7 +60,7 @@ public class Torneo implements Serializable {
      *
      * @param id ID único del torneo.
      */
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

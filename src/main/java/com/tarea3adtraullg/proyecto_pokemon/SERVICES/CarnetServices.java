@@ -1,71 +1,48 @@
-package com.proyectopokemonadt.SERVICES;
-
-import com.proyectopokemonadt.DAO.CarnetDAO;
-import com.proyectopokemonadt.DTO.CarnetDTO;
-import com.proyectopokemonadt.ENTIDADES.Carnet;
-
-import java.util.ArrayList;
+package com.tarea3adtraullg.proyecto_pokemon.services;
 import java.util.List;
 
-public class CarnetServices {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-    private CarnetDAO carnetDAO;
+import com.tarea3adtraullg.proyecto_pokemon.entidades.Carnet;
+import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoCarnet;
+
+
+@Service
+public class CarnetServices {
+@Autowired
+
+    private final RepoCarnet repoCarnet;
     private static CarnetServices instancia;
 
-    public static CarnetServices getInstancia() {
+    public static CarnetServices getInstancia(RepoCarnet repoCarnet) {
         if (instancia == null) {
-            instancia = new CarnetServices();
+            instancia = new CarnetServices(repoCarnet);
         }
         return instancia;
     }
 
-    public CarnetServices() {
-       
+    public CarnetServices(RepoCarnet repoCarnet) {
+       this.repoCarnet = repoCarnet;
     }
 
-    public CarnetServices(CarnetDAO carnetDAO) {
-        this.carnetDAO = carnetDAO;
+    public void crearCarnet(Carnet carnet) {
+        repoCarnet.save(carnet);
     }
 
-    public boolean crearCarnet(CarnetDTO carnetDTO) {
-        Carnet carnet = mapearDTOAEntidad(carnetDTO);
-        return carnetDAO.crearCarnet(carnet);
+    public void actualizarCarnet(Carnet carnet) {
+        repoCarnet.save(carnet);
     }
 
-    public boolean eliminarCarnetPorId(int idEntrenador) {
-        return carnetDAO.eliminarCarnetPorIdEntrenador(idEntrenador);
+    public void eliminarCarnetPorId(int idCarnet) {
+        repoCarnet.deleteById(idCarnet);
     }
 
-    public CarnetDTO obtenerCarnetPorId(int idEntrenador) {
-        Carnet carnet = carnetDAO.obtenerCarnetPorIdEntrenador(idEntrenador);
-        return mapearEntidadADTO(carnet);
+    public Carnet obtenerCarnetPorId(int idCarnet) {
+        return repoCarnet.findById(idCarnet).orElse(null);
     }
 
-    public List<CarnetDTO> obtenerTodosLosCarnets() {
-        List<Carnet> carnets = carnetDAO.obtenerTodosLosCarnets();
-        List<CarnetDTO> carnetDTOs = new ArrayList<>();
-        for (Carnet carnet : carnets) {
-            carnetDTOs.add(mapearEntidadADTO(carnet));
-        }
-        return carnetDTOs;
-    }
-
-    public boolean actualizarCarnet(int idEntrenador, CarnetDTO carnetDTO) {
-        Carnet carnet = mapearDTOAEntidad(carnetDTO);
-        return carnetDAO.actualizarCarnetPorIdEntrenador(idEntrenador, carnet);
-    }
-
-    private Carnet mapearDTOAEntidad(CarnetDTO carnetDTO) {
-        Carnet carnet = new Carnet();
-        carnet.setIdEntrenador(carnetDTO.getIdEntrenador());
-        carnet.setFechaExpedicion(carnetDTO.getFechaExpedicion());
-        carnet.setPuntos(carnetDTO.getPuntos());
-        carnet.setNumVictorias(carnetDTO.getNumVictorias());
-        return carnet;
-    }
-
-    private CarnetDTO mapearEntidadADTO(Carnet carnet) {
-        return new CarnetDTO(carnet.getIdEntrenador(), carnet.getFechaExpedicion(), carnet.getPuntos(),
-                carnet.getNumVictorias());
+    public List<Carnet> obtenerTodosLosCarnets() {
+        return repoCarnet.findAll();
     }
 }

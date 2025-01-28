@@ -1,18 +1,6 @@
 package com.tarea3adtraullg.proyecto_pokemon.autenticacion;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.Scanner;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.tarea3adtraullg.proyecto_pokemon.entidades.*;
-import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoEntrenador;
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.EntrenadorServices;
-import com.tarea3adtraullg.proyecto_pokemon.complementarias.*;
 
 /**
  * Clase que gestiona el registro de usuarios en el sistema, incluyendo
@@ -22,28 +10,28 @@ import com.tarea3adtraullg.proyecto_pokemon.complementarias.*;
  * @author raullg97
  */
 public class RegistroENT {
-@Autowired
-    private final EntrenadorServices entrenadorServices;
+
     private static boolean registerOK = false;
     private static Entrenador temp;
+    private static Validaciones val;
     private static RegistroENT instancia;
 
     public static RegistroENT getInstancia(){
         if (instancia == null) {
-            instancia = new RegistroENT(temp);
+            instancia = new RegistroENT(temp, val);
             return instancia;
         }
         return instancia;
     }
     
-    public RegistroENT(Entrenador temp){
+    public RegistroENT(Entrenador temp, Validaciones val){
         this.temp = temp;
     }
 
     public static void registroData(Entrenador temp) {
             String rol = "ENT";
             
-            if (creadorUsuario(temp.getNombre(), temp.getContrasena(), rol,temp.getNacionalidad())) {
+            if (val.creadorUsuario(temp.getNombre(), temp.getContrasena(), rol,temp.getNacionalidad())) {
                 System.out.println("Se ha registrado correctamente! Sus datos de registro: ");
                 System.out.println("Usuario: " + temp.getNombre());
                 System.out.println("Contraseña: " + temp.getContrasena());

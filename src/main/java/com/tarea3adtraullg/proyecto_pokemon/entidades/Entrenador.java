@@ -58,6 +58,7 @@ public class Entrenador implements Serializable {
          * Constructor sin parámetros.
          */
         public Entrenador() {
+
         }
     
         /**
@@ -71,6 +72,13 @@ public class Entrenador implements Serializable {
         public Entrenador(String nombre, String nacionalidad) {
             this.nombre = nombre;
             this.nacionalidad = nacionalidad;
+            this.fechaCreacion = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        }
+
+        public Entrenador(String nombre, String pass, String nacionalidad) {
+            this.nombre = nombre;
+            this.nacionalidad = nacionalidad;
+            this.contrasena = pass;
             this.fechaCreacion = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         }
     

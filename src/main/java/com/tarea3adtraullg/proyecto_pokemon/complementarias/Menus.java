@@ -76,7 +76,7 @@ public class Menus {
             ShowNations.show();
             String nac = sc.next();
 
-            while (!RegistroENT.existeNacionalidad(nac)) {
+            while (!Validaciones.existeNacionalidad(nac)) {
                 System.out.println("Eliga una nacionalidad de la lista");
                 ShowNations.show();
                 nac = sc.next();
@@ -97,7 +97,7 @@ public class Menus {
                 System.out.println("Nacionalidad: ");
                 nac = sc.next();
 
-                while (!RegistroENT.existeNacionalidad(nac)) {
+                while (!Validaciones.existeNacionalidad(nac)) {
                     System.out.println("Eliga una nacionalidad de la lista");
                     ShowNations.show();
                     nac = sc.next();
@@ -181,7 +181,7 @@ public class Menus {
                         String nacionalidadAT = topSc.next();
 
                         //new Usuario(nombreAT, passAT, nacionalidadAT, "AT");
-                        RegistroENT.registroDataAT(nombreAT, passAT, "AT", nacionalidadAT);
+                        RegistroAT.getInstance().registroDataAT(nombreAT, passAT, "AT", nacionalidadAT);
                         torneos.add(torneo);
                         booleanTorVal = true;
                         topSc.close();
