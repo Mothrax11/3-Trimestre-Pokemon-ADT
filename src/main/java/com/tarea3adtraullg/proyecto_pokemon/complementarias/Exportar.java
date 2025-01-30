@@ -39,13 +39,13 @@ public class Exportar {
      * 
      * @param entrenador El objeto Entrenador del que se exportarán los datos.
      */
-    public Exportar(Entrenador entrenador) {
-        this.entrenador = entrenador;
-        this.nombre = entrenador.getNombre();
-        this.idEntrenador = entrenador.getId();
-        this.nacionalidad = entrenador.getNacionalidad();
-        //this.puntos = entrenador.getPuntos();
-        this.fechaCreacion = entrenador.getFechaCreacion();
+    public Exportar(UsuarioActivo usuarioActivo) {
+        //this.entrenador;
+        this.nombre = usuarioActivo.getNombre();
+        this.idEntrenador = usuarioActivo.getId();
+        this.nacionalidad = usuarioActivo.getNacionalidad();
+        //this.puntos = usuarioActivo.getPuntos();
+        this.fechaCreacion = usuarioActivo.getFechaCreacion();
         //this.torneos = entrenador.getTorneos();
     }
 

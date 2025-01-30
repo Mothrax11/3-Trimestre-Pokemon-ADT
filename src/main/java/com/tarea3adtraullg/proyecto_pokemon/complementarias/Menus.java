@@ -3,6 +3,8 @@ package com.tarea3adtraullg.proyecto_pokemon.complementarias;
 import com.tarea3adtraullg.proyecto_pokemon.*;
 import com.tarea3adtraullg.proyecto_pokemon.autenticacion.*;
 import com.tarea3adtraullg.proyecto_pokemon.entidades.*;
+import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoEntrenador;
+import com.tarea3adtraullg.proyecto_pokemon.services.EntrenadorServices;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -18,6 +20,7 @@ import javax.naming.InitialContext;
  * @author raullg97
  */
 public class Menus {
+
     static Entrenador temp = null;
     /**
      * Muestra el menú principal del sistema, donde el usuario puede elegir entre
@@ -49,6 +52,7 @@ public class Menus {
                 //registrar(torneos);
             //} else {
                 iniciarSesion(torneos, torneoDefault);
+                System.out.println(UsuarioActivo.getInstancia().getNombre());
             //}
 
         }
@@ -188,8 +192,8 @@ public class Menus {
                     }
                 }
 
-            } else {
-                if (Login.getInstance().comprobarUsuario(nombre, contraseña,"ENT")) {
+            } else {           
+                if (Login.getInstance(repoEntrenador).comprobarUsuario(nombre, contraseña, "ENT")) {
                     Entrenador activeUser = new Entrenador(nombre, contraseña);
                     //activeUser.añadirTorneo(torneoDefault);
                     mostrarMenuEntrenador(torneos);
@@ -229,7 +233,7 @@ public class Menus {
         int eleccion = sc.nextInt();
 
         if(eleccion == 1){
-            Exportar ex = new Exportar(temp);
+            Exportar ex = new Exportar(UsuarioActivo.getInstancia());
             ex.ejecutar();
             System.out.println("Carnet exportado con éxito!");
             mostrarMenuEntrenador(torneos);

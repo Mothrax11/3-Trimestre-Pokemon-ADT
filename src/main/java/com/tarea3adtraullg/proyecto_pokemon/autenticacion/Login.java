@@ -8,6 +8,9 @@ import java.io.FileWriter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import com.tarea3adtraullg.proyecto_pokemon.complementarias.*;
+import com.tarea3adtraullg.proyecto_pokemon.entidades.Entrenador;
+import com.tarea3adtraullg.proyecto_pokemon.entidades.UsuarioActivo;
+import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoEntrenador;
 
 /**
  * Clase encargada de gestionar el inicio de sesión en el sistema.
@@ -20,8 +23,9 @@ import com.tarea3adtraullg.proyecto_pokemon.complementarias.*;
  */
 public class Login {
     private static Login instance; // Instancia única de la clase Login
-
-    private Login() {
+    private final RepoEntrenador repoEntrenador;
+    private Login(RepoEntrenador repoEntrenador) {
+        this.repoEntrenador = repoEntrenador;
     }
 
     /**
@@ -31,9 +35,9 @@ public class Login {
      *
      * @return La instancia única de Login.
      */
-    public static Login getInstance() {
+    public static Login getInstance(RepoEntrenador repoEntrenador) {
         if (instance == null) {
-            instance = new Login();
+            instance = new Login(repoEntrenador);
         }
         return instance;
     }
@@ -102,9 +106,19 @@ public class Login {
                     if (palabrasLinea[2].equals("AT")) {
                         Menus.mostrarMenuAdministradorTorneos();
                     } else if(palabrasLinea[2].equals("ENT")){
-                        
+                        Entrenador usuario = repoEntrenador.findByNombreAndContrasena(nombre, pass);
+                            UsuarioActivo usuarioActivo = UsuarioActivo.getInstancia();
+                            usuarioActivo.setId(usuario.getId());
+                            usuarioActivo.setNombre(usuario.getNombre());
+                            usuarioActivo.setNacionalidad(usuario.getNacionalidad());
+                            usuarioActivo.setContrasena(usuario.getContrasena());
+                            usuarioActivo.setFechaCreacion(usuario.getFechaCreacion());
+                            usuarioActivo.setTipoUsr(usuario.getTipoUsr());
+                            usuarioActivo.setCarnet(usuario.getCarnet());
+                            System.out.println(usuarioActivo.getNombre());
                     }
                     writeLog(nombre);
+                    
                     br.close();
                     return true;
                 }

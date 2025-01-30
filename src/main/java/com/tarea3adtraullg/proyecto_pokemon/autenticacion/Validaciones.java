@@ -9,14 +9,19 @@ import java.io.FileWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.tarea3adtraullg.proyecto_pokemon.complementarias.ObtenerAllServices;
 import com.tarea3adtraullg.proyecto_pokemon.complementarias.ShowNations;
 import com.tarea3adtraullg.proyecto_pokemon.entidades.Entrenador;
+import com.tarea3adtraullg.proyecto_pokemon.entidades.UsuarioActivo;
+import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoEntrenador;
 import com.tarea3adtraullg.proyecto_pokemon.services.EntrenadorServices;
 
 @Component
 public class Validaciones {
+    @Autowired
 
-    private final EntrenadorServices entrenadorServices;
+    private RepoEntrenador repoEntrenador;
+    private final ObtenerAllServices obtenerAllServices;
 
     private boolean registerOK = false;
     private String nombre;
@@ -25,8 +30,8 @@ public class Validaciones {
     private String tipoUsr;
 
     @Autowired
-    public Validaciones(EntrenadorServices entrenadorServices) {
-        this.entrenadorServices = entrenadorServices;
+    public Validaciones(ObtenerAllServices obtenerAllServices) {
+        this.obtenerAllServices = obtenerAllServices;
     }
 
     // Otros constructores y métodos
@@ -72,8 +77,18 @@ public class Validaciones {
                 while ((buscar = br.readLine()) != null) {
                     String[] palabrasLinea = buscar.split(" ");
                     if (palabrasLinea[0].equals(nombre) && palabrasLinea[1].equals(pass)) {
-                        br.close();
-                        return true;
+                        Entrenador usuario = obtenerAllServices.getService(EntrenadorServices.class).
+                            UsuarioActivo usuarioActivo = UsuarioActivo.getInstancia();
+                            usuarioActivo.setId(usuario.getId());
+                            usuarioActivo.setNombre(usuario.getNombre());
+                            usuarioActivo.setNacionalidad(usuario.getNacionalidad());
+                            usuarioActivo.setContrasena(usuario.getContrasena());
+                            usuarioActivo.setFechaCreacion(usuario.getFechaCreacion());
+                            usuarioActivo.setTipoUsr(usuario.getTipoUsr());
+                            usuarioActivo.setCarnet(usuario.getCarnet());
+                            System.out.println(usuarioActivo.getNombre());
+                            br.close();
+                            return true;
                     }
                 }
             }

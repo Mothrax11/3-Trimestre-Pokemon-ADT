@@ -207,4 +207,30 @@ public class Entrenador implements Serializable {
     public void setFechaCreacion(String fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
+
+    public String getTipoUsr() {
+        return tipoUsr;
+    }
+
+    public void setTipoUsr(String tipoUsr) {
+        this.tipoUsr = tipoUsr;
+    }
+
+    public List<Combate> getCombatesEntrenador() {
+        return combatesEntrenador;
+    }
+
+    public void setCombatesEntrenador(List<Combate> combatesEntrenador) {
+        this.combatesEntrenador = combatesEntrenador;
+    }
+
+    public List<Torneo> getTorneos() {
+        return torneos;
+    }
+
+    public void setTorneos(List<Torneo> torneos) {
+        this.torneos = torneos;
+    }
+
+    
 }
