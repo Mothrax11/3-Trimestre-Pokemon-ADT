@@ -1,4 +1,4 @@
-package com.tarea3adtraullg.proyecto_pokemon.services;
+package com.tarea3adtraullg.proyecto_pokemon.SERVICES;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoTorneo;
 
 @Service
 public class TorneoServices {
+    
     @Autowired
     private final RepoTorneo repoTorneo;
     private static TorneoServices instancia;

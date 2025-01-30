@@ -11,7 +11,13 @@ public class UsuarioActivo {
     private String tipoUsr;
     private Carnet carnet;
 
-    private UsuarioActivo() {
+    public UsuarioActivo() {
+    }
+    
+    private UsuarioActivo(String nombre, String pass, String rol){
+        this.nombre = nombre;
+        this.contrasena = pass;
+        this.tipoUsr = rol;
     }
 
     public static UsuarioActivo getInstancia() {

@@ -1,4 +1,4 @@
-package com.tarea3adtraullg.proyecto_pokemon.services;
+package com.tarea3adtraullg.proyecto_pokemon.SERVICES;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
