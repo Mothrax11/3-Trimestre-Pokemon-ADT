@@ -1,7 +1,7 @@
 package com.tarea3adtraullg.proyecto_pokemon.entidades;
 
 public class UsuarioActivo {
-    
+
     private static UsuarioActivo instancia;
     private long id;
     private String nombre;
@@ -11,13 +11,19 @@ public class UsuarioActivo {
     private String tipoUsr;
     private Carnet carnet;
 
-    public UsuarioActivo() {
+    // Constructor privado
+    private UsuarioActivo() {
     }
-    
-    private UsuarioActivo(String nombre, String pass, String rol){
-        this.nombre = nombre;
-        this.contrasena = pass;
-        this.tipoUsr = rol;
+
+    // Constructor que toma un objeto Entrenador
+    public UsuarioActivo(Entrenador entrenador) {
+        this.id = entrenador.getId();
+        this.nombre = entrenador.getNombre();
+        this.nacionalidad = entrenador.getNacionalidad();
+        this.contrasena = entrenador.getContrasena();
+        this.fechaCreacion = entrenador.getFechaCreacion();
+        this.tipoUsr = entrenador.getTipoUsr();
+        this.carnet = entrenador.getCarnet();
     }
 
     public static UsuarioActivo getInstancia() {
@@ -27,6 +33,7 @@ public class UsuarioActivo {
         return instancia;
     }
 
+    // Métodos getter y setter
     public long getId() {
         return id;
     }

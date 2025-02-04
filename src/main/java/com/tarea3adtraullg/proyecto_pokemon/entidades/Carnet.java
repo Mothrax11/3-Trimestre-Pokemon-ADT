@@ -3,37 +3,34 @@ package com.tarea3adtraullg.proyecto_pokemon.entidades;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.EntrenadorServices;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-@Entity
+@Entity(name = "carnet")
+@Table(name = "carnet")
 public class Carnet implements Serializable {
 
     @Id
     private Long idEntrenador; 
-
+    @Column(name = "fecha_expedicion")
     private LocalDate fechaExpedicion;
+    @Column(name = "puntos")
     private float puntos;
+    @Column(name = "num_victorias")
     private int numVictorias;
 
     
     public Carnet() {
+        
     }
-
-    
-    public Carnet(Long idEntrenador, LocalDate fechaExpedicion, float puntos, int numVictorias) {
-        this.idEntrenador = idEntrenador;
-        this.fechaExpedicion = fechaExpedicion;
-        this.puntos = puntos;
-        this.numVictorias = numVictorias;
-    }
-
-    
-    public Carnet(Long idEntrenador, LocalDate fechaExpedicion) {
-        this.idEntrenador = idEntrenador;
-        this.fechaExpedicion = fechaExpedicion;
-    }
-
   
     public Long getIdEntrenador() {
         return idEntrenador;

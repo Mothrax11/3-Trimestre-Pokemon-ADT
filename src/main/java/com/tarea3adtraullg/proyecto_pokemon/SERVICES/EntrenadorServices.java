@@ -1,4 +1,5 @@
 package com.tarea3adtraullg.proyecto_pokemon.SERVICES;
+import java.lang.classfile.instruction.ReturnInstruction;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ public class EntrenadorServices {
     
     @Autowired
     private final RepoEntrenador repoEntrenador; 
+    @Autowired
     private static EntrenadorServices instancia;
 
     public static EntrenadorServices getInstancia(RepoEntrenador repoEntrenador) {
@@ -45,7 +47,7 @@ public class EntrenadorServices {
     }
 
     public Entrenador buscarPorNombreYContrasena(String nombre, String contrasena) {
-        return repoEntrenador.findByNombreAndContrasena(nombre, contrasena);
+         return repoEntrenador.findByNombreAndPassword(nombre, contrasena);
     }
     
 }

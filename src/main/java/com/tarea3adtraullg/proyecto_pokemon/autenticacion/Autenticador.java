@@ -12,8 +12,10 @@ import java.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.CarnetServices;
 import com.tarea3adtraullg.proyecto_pokemon.SERVICES.EntrenadorServices;
 import com.tarea3adtraullg.proyecto_pokemon.complementarias.ShowNations;
+import com.tarea3adtraullg.proyecto_pokemon.entidades.Carnet;
 import com.tarea3adtraullg.proyecto_pokemon.entidades.Entrenador;
 import com.tarea3adtraullg.proyecto_pokemon.entidades.UsuarioActivo;
 import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoEntrenador;
@@ -26,13 +28,16 @@ public class Autenticador {
     private boolean registroExitoso = false;
 
     @Autowired
+    CarnetServices carnetServices;
+
+    @Autowired
     public Autenticador(RepoEntrenador repoEntrenador, EntrenadorServices entrenadorServices) {
         this.repoEntrenador = repoEntrenador;
         this.entrenadorServices = entrenadorServices;
     }
 
     // Método para registrar un nuevo usuario en el sistema
-    public boolean registrarEntrenador(String nombre, String nac, String pass, String tipoUsr) {
+    public boolean registrarEntrenador(String nombre, String pass, String nac, String tipoUsr) {
         if (usuarioExistente(nombre, pass)) {
             return false; // El usuario ya existe
         } else {
@@ -47,8 +52,16 @@ public class Autenticador {
                 bf.write(" ");
                 bf.newLine();
                 bf.close();
-                Entrenador nuevoEntrenador = new Entrenador(nombre, nac, pass, tipoUsr);
+                Entrenador nuevoEntrenador = new Entrenador(nombre, pass, nac,  tipoUsr);
                 entrenadorServices.crearEntrenador(nuevoEntrenador);
+                LocalDate fechaC = LocalDate.now();
+                Carnet c = new Carnet();
+                c.setIdEntrenador(entrenadorServices.buscarPorNombreYContrasena(nombre, pass).getId());
+                c.setNumVictorias(0);
+                c.setPuntos(0);
+                c.setFechaExpedicion(fechaC);
+                carnetServices.crearCarnet(c);
+
                 return true; 
             } catch (IOException e) {
                 System.out.println(e.getMessage());
@@ -79,7 +92,7 @@ public class Autenticador {
             return false;
         }
 
-        Entrenador entrenador = repoEntrenador.findByNombreAndContrasena(nombre, pass);
+        Entrenador entrenador = entrenadorServices.buscarPorNombreYContrasena(nombre, pass);
         if (entrenador != null) {
             encontradoEnBD = true;
 
@@ -94,6 +107,8 @@ public class Autenticador {
 
             System.out.println("Usuario validado en archivo y base de datos: " + usuarioActivo.getNombre());
         }
+
+
 
         return encontradoEnArchivo && encontradoEnBD;
     }
@@ -131,7 +146,7 @@ public class Autenticador {
                 String[] palabrasLinea = buscar.split(" ");
                 if (palabrasLinea[0].equals(nombre) && palabrasLinea[1].equals(pass)) {
                     if (palabrasLinea[2].equals("AT")) {
-                        Entrenador usuario = repoEntrenador.findByNombreAndContrasena(nombre, pass);
+                        Entrenador usuario = entrenadorServices.buscarPorNombreYContrasena(nombre, pass);
                         if (usuario != null) { // Asegurarse de que el usuario no sea null
                             UsuarioActivo usuarioActivo = UsuarioActivo.getInstancia();
                             usuarioActivo.setId(usuario.getId());
@@ -151,7 +166,7 @@ public class Autenticador {
                         }
                         
                     } else if (palabrasLinea[2].equals("ENT")) {
-                        Entrenador usuario = repoEntrenador.findByNombreAndContrasena(nombre, pass); 
+                        Entrenador usuario = entrenadorServices.buscarPorNombreYContrasena(nombre, pass);
                         if(usuario != null) { // Asegurarse de que el usuario no sea null
                             UsuarioActivo usuarioActivo = UsuarioActivo.getInstancia();
                             usuarioActivo.setId(usuario.getId());

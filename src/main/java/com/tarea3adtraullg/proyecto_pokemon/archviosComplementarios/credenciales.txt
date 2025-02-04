@@ -1,10 +1,7 @@
-admingeneral Passw0rd AG 1
-admintorneos Passw0rd AT 2 
-mothrax2 ES ENT 
-motrhax2 ES ENT 
-mothrax ES ENT 
-1 ES ENT 
-2 ES ENT 
-6 ES ENT 
-ahah ES ENT 
-mothrax ES ENT 
+admingeneral Passw0rd AG -1
+admintorneos Passw0rd AT -2 
+mothrax 123 ENT
+mothrax2 123 ENT 
+iyan 123 ENT 
+pelayo 123 ENT 
+pelayo2 123 ENT 

@@ -1,15 +1,13 @@
 package com.tarea3adtraullg.proyecto_pokemon.complementarias;
 
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.EntrenadorServices;
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.TorneoServices;
 import com.tarea3adtraullg.proyecto_pokemon.autenticacion.*;
 import com.tarea3adtraullg.proyecto_pokemon.entidades.*;
-
-import jakarta.annotation.PostConstruct;
-
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,6 +23,12 @@ public class Menus {
 
     @Autowired
     Autenticador autenticator;
+
+    @Autowired
+    EntrenadorServices entrenadorServices;
+
+    @Autowired
+    TorneoServices torneoServices;
 
     static Entrenador temp = null;
 
@@ -56,6 +60,7 @@ public class Menus {
             boolean login = false;
             while (login == false) {
                 if(iniciarSesion(torneos, torneoDefault)){
+
                     login = true;
                 }
             }
@@ -170,9 +175,10 @@ public class Menus {
                     }
 
                     // Revisa que el nuevo torneo no tiene el nombre de alguno ya creado
-                    for (int i = 0; i < torneos.size(); i++) {
-                        if (torneos.get(i).getNombre().equals(nombreTorneo)
-                                && (torneos.get(i).getCodRegion() == codRegion)) {
+                    List<Torneo> todosLosTorneos = torneoServices.obtenerTodosLosTorneos();
+                    for (int i = 0; i < todosLosTorneos.size(); i++) {
+                        if (todosLosTorneos.get(i).getNombre().equals(nombreTorneo)
+                                && (todosLosTorneos.get(i).getCodRegion() == codRegion)) {
                             System.out.println(
                                     "Nombre del torneo con esa región en uso, escriba otro nombre o región.");
                         } else {
@@ -185,17 +191,27 @@ public class Menus {
                     System.out.println("El torneo " + nombreTorneo + " ha sido creado con éxito");
                     Torneo torneo = new Torneo(nombreTorneo, codRegion, puntosVictoria);
                     ArchivadorTorneos.Archivador(torneoDefault);
-                    System.out.print("¿Cual es el nombre del administrador del torneo?: ");
-                    String nombreAT = topSc.next();
-                    System.out.print("¿Cual es la contraseña del administrador del torneo?: ");
-                    String passAT = topSc.next();
-                    System.out.print("¿Cual es la nacionalidad  del administrador del torneo?: ");
 
-                    ShowNations.show();
-                    String nacionalidadAT = topSc.next();
+                    boolean adminTvalido = false;
 
-                    // new Usuario(nombreAT, passAT, nacionalidadAT, "AT");
-                    // autenticator.registroDataAT(nombreAT, passAT, "AT", nacionalidadAT);
+                    while (adminTvalido == false) {
+                        System.out.print("¿Cual es el nombre del administrador del torneo?: ");
+                        String nombreAT = topSc.next();
+                        System.out.print("¿Cual es la contraseña del administrador del torneo?: ");
+                        String passAT = topSc.next();
+                        Entrenador adminDelTorneo = entrenadorServices.buscarPorNombreYContrasena(nombreAT, passAT);
+                        if (adminDelTorneo == null) {
+                            System.out.println("Error en la seleccion del administrador del torneo.");
+                            System.out.println("Por favor, seleccione otro en su lugar o cree uno nuevo.");
+                        } else if (adminDelTorneo.getTipoUsr() == "ENT"){
+                            System.out.println("Error en la seleccion del administrador del torneo.");
+                            System.out.println("Por favor, seleccione otro en su lugar o cree uno nuevo.");
+                        } else {
+                            adminTvalido = true;
+                        }
+                    }
+                    PONER EL ID DEL ADMIN TORNEO EN EL TORNEO
+                    torneoServices.crearTorneo(torneo);
                     torneos.add(torneo);
                     booleanTorVal = true;
                     topSc.close();
@@ -205,7 +221,8 @@ public class Menus {
 
         } else {
             if (autenticator.comprobarUsuario(nombre, contraseña, "ENT")) {
-                Entrenador activeUser = new Entrenador(nombre, contraseña);
+                UsuarioActivo act = new UsuarioActivo(entrenadorServices.buscarPorNombreYContrasena(nombre, contraseña));
+    
                 mostrarMenuEntrenador(torneos);
                 return true;
             }

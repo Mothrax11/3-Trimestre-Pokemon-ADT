@@ -24,7 +24,7 @@ import jakarta.persistence.Transient;
  * 
  * @author raullg97
  */
-@Entity
+@Entity(name = "entrenador")
 @Table(name = "entrenador")
 public class Entrenador implements Serializable {
     @Id
@@ -38,7 +38,7 @@ public class Entrenador implements Serializable {
     private String nacionalidad; // Nacionalidad del entrenador
 
     @Column(name = "password")
-    private String contrasena; // Contraseña del entrenador
+    private String password; // Contraseña del entrenador
 
     @Column(name = "fechaCreacion")
     private String fechaCreacion; // Fecha de creación del carnet
@@ -78,13 +78,13 @@ public class Entrenador implements Serializable {
         public Entrenador(String nombre, String pass, String nacionalidad) {
             this.nombre = nombre;
             this.nacionalidad = nacionalidad;
-            this.contrasena = pass;
+            this.password = pass;
             this.fechaCreacion = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         }
     
         public Entrenador(String nombre, String pass, String nacionalidad, String tipoUsr) {
             this.nombre = nombre;
-            this.contrasena = pass;
+            this.password = pass;
             this.nacionalidad = nacionalidad;
             this.tipoUsr = tipoUsr;
             this.fechaCreacion = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -178,7 +178,7 @@ public class Entrenador implements Serializable {
      * @return Contraseña del entrenador.
      */
     public String getContrasena() {
-        return contrasena;
+        return password;
     }
 
     /**
@@ -187,7 +187,7 @@ public class Entrenador implements Serializable {
      * @param contrasena Nueva contraseña del entrenador.
      */
     public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
+        this.password = contrasena;
     }
 
     /**

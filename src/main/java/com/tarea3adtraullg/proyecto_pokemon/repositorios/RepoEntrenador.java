@@ -8,5 +8,7 @@ import com.tarea3adtraullg.proyecto_pokemon.entidades.Entrenador;
 
 @Repository
 public interface RepoEntrenador extends JpaRepository<Entrenador,Long> {
-    Entrenador findByNombreAndContrasena(String nombre, String contrasena);
+    @Query("SELECT e FROM entrenador e WHERE e.nombre = ?1 AND e.password = ?2")
+    Entrenador findByNombreAndPassword(String nombre, String password);
+
 }
