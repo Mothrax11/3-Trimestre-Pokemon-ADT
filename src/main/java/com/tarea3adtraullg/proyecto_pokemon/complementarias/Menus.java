@@ -1,10 +1,14 @@
 package com.tarea3adtraullg.proyecto_pokemon.complementarias;
 
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.CombateEntrenadoresServices;
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.CombateServices;
 import com.tarea3adtraullg.proyecto_pokemon.SERVICES.EntrenadorServices;
 import com.tarea3adtraullg.proyecto_pokemon.SERVICES.TorneoAdministradorServices;
 import com.tarea3adtraullg.proyecto_pokemon.SERVICES.TorneoServices;
 import com.tarea3adtraullg.proyecto_pokemon.autenticacion.*;
 import com.tarea3adtraullg.proyecto_pokemon.entidades.*;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -33,6 +37,12 @@ public class Menus {
 
     @Autowired
     TorneoAdministradorServices torneoAdministradorServices;
+
+    @Autowired
+    CombateEntrenadoresServices combateEntrenadoresServices;
+
+    @Autowired
+    CombateServices combateServices;
 
     /**
      * Muestra el menú principal del sistema, donde el usuario puede elegir entre
@@ -268,6 +278,7 @@ public class Menus {
                 float puntosVictoria = topSc.nextInt();
                 System.out.println("El torneo " + nombreTorneo + " ha sido creado con éxito");
                 Torneo torneo = new Torneo(nombreTorneo, codRegion, puntosVictoria);
+                
                 ArchivadorTorneos.Archivador(torneoDefault);
 
                 boolean adminTvalido = false;
@@ -291,8 +302,18 @@ public class Menus {
                         torneoAdmin.setEntrenador(adminDelTorneo);
                         torneoAdmin.setTorneo(torneo);
                         torneoAdministradorServices.crearTorneoAdministrador(torneoAdmin);
-                        System.out.println("El administrador del torneo " + torneo.getNombre() + " es "
-                                + adminDelTorneo.getNombre());
+                        System.out.println("El administrador del torneo " + torneo.getNombre() + " es " + adminDelTorneo.getNombre());
+                        for (int i = 0; i < 3; i++) {
+                            Combate combate = new Combate();
+                            combate.setFecha(LocalDate.now());
+                            combate.setTorneo(torneo);
+                            CombateEntrenadores combateEntrenadores = new CombateEntrenadores();
+                            combateEntrenadores.setCombate(combate);
+                            combateEntrenadores.setIdTorneo(torneo.getIdTorneo());
+                            combateServices.crearCombate(combate);
+                            combateEntrenadoresServices.crearCombateEntrenadores(combateEntrenadores);
+
+                        }
                     }
                 }
                 torneos.add(torneo);

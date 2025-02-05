@@ -7,10 +7,12 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
@@ -33,6 +35,9 @@ public class Torneo implements Serializable {
     private char codRegion; // Código de la región a la que pertenece el torneo
     @Column(name = "puntos_victoria")
     private float puntosVictoria; // Puntos asignados por cada victoria
+
+    @OneToMany(mappedBy = "torneo", fetch = FetchType.EAGER)
+    private List<Combate> combates;
 
     @ManyToMany(mappedBy = "torneos")
     private List<Entrenador> entrenadores = new ArrayList<>();
@@ -128,4 +133,30 @@ public class Torneo implements Serializable {
     public void setPuntosVictoria(float puntosVictoria) {
         this.puntosVictoria = puntosVictoria;
     }
+
+    public long getIdTorneo() {
+        return idTorneo;
+    }
+
+    public void setIdTorneo(long idTorneo) {
+        this.idTorneo = idTorneo;
+    }
+
+    public List<Combate> getCombates() {
+        return combates;
+    }
+
+    public void setCombates(List<Combate> combates) {
+        this.combates = combates;
+    }
+
+    public List<Entrenador> getEntrenadores() {
+        return entrenadores;
+    }
+
+    public void setEntrenadores(List<Entrenador> entrenadores) {
+        this.entrenadores = entrenadores;
+    }
+
+    
 }

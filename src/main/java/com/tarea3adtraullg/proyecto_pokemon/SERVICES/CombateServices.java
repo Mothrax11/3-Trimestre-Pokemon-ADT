@@ -8,16 +8,10 @@ import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoCombate;
 
 @Service
 public class CombateServices {
-@Autowired
-    private final RepoCombate repoCombate;
-    private static CombateServices instancia;
 
-    public static CombateServices getInstancia(RepoCombate repoCombate){
-        if (instancia == null) {
-            instancia = new CombateServices(repoCombate);
-        }
-        return instancia;
-    }
+    @Autowired
+    private final RepoCombate repoCombate;
+    private CombateServices instancia;
 
     private CombateServices(RepoCombate repoCombate){
        this.repoCombate = repoCombate;
@@ -42,4 +36,6 @@ public class CombateServices {
     public List<Combate> obtenerTodosLosCombates() {
         return repoCombate.findAll();
     }
+
+    
 }

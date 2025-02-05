@@ -11,7 +11,6 @@ import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoCarnet;
 @Service
 public class CarnetServices {
 @Autowired
-
     private final RepoCarnet repoCarnet;
     private static CarnetServices instancia;
 
