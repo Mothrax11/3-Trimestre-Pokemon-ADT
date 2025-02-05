@@ -13,14 +13,6 @@ public class TorneoServices {
     
     @Autowired
     private final RepoTorneo repoTorneo;
-    private static TorneoServices instancia;
-
-    public static TorneoServices getInstancia(RepoTorneo repoTorneo) {
-        if (instancia == null) {
-            instancia = new TorneoServices(repoTorneo);
-        }
-        return instancia;
-    }
 
     public TorneoServices(RepoTorneo repoTorneo) {
         this.repoTorneo = repoTorneo;
@@ -44,6 +36,10 @@ public class TorneoServices {
 
     public List<Torneo> obtenerTodosLosTorneos() {
         return repoTorneo.findAll();
+    }
+
+    public List<Torneo> encontrarTorneosPorIdAdmin(long idAdmin) {
+        return repoTorneo.encontrarTorneosPorIdAdmin(idAdmin);
     }
 
 }

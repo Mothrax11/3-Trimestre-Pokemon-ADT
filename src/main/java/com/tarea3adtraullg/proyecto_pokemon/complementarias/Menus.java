@@ -60,12 +60,14 @@ public class Menus {
             boolean login = false;
             while (login == false) {
                 if(iniciarSesion(torneos, torneoDefault)){
-
                     login = true;
                 }
             }
-            
-
+            if(UsuarioActivo.getInstancia().getTipoUsr().equals("ENT")){
+               mostrarMenuEntrenador(torneos);
+            } else if (UsuarioActivo.getInstancia().getTipoUsr().equals("AT")) {
+                mostrarMenuAdministradorTorneos();
+            }
         }
 
         if (eleccion == 3) {
@@ -138,9 +140,8 @@ public class Menus {
         System.out.println("¿Cuál es tu contraseña?");
         String contraseña = sc.next();
 
-        if (nombre.equals("admintorneos") && contraseña.equals("Passw0rd")) {
-            mostrarMenuAdministradorTorneos();
-        } else if (nombre.equals("admingeneral") && contraseña.equals("Passw0rd")) {
+    
+        if (nombre.equals("admingeneral") && contraseña.equals("Passw0rd")) {
             mostrarMenuAdminGeneral();
             int choice = sc.nextInt();
             boolean booleanTorVal = false;
@@ -208,22 +209,21 @@ public class Menus {
                             System.out.println("Por favor, seleccione otro en su lugar o cree uno nuevo.");
                         } else {
                             adminTvalido = true;
+                            torneo.setResponsable(adminDelTorneo);
+                            System.out.println("El administrador del torneo " + torneo.getNombre() + " es " + adminDelTorneo.getNombre());
                         }
                     }
-                    PONER EL ID DEL ADMIN TORNEO EN EL TORNEO
                     torneoServices.crearTorneo(torneo);
                     torneos.add(torneo);
                     booleanTorVal = true;
                     topSc.close();
-                    return true;
                 }
+                return true;
             }
 
         } else {
-            if (autenticator.comprobarUsuario(nombre, contraseña, "ENT")) {
+            if (autenticator.comprobarUsuario(nombre, contraseña, "ENT") || autenticator.comprobarUsuario(nombre, contraseña, "AT")) {
                 UsuarioActivo act = new UsuarioActivo(entrenadorServices.buscarPorNombreYContrasena(nombre, contraseña));
-    
-                mostrarMenuEntrenador(torneos);
                 return true;
             }
         }
@@ -305,8 +305,23 @@ public class Menus {
     public void mostrarMenuAdministradorTorneos() {
         System.out.println("---------------------------------------------------------------");
         System.out.println("Bienvenido Administrador de Torneos, ¿que desea hacer?");
-        System.out.println("1 -> Salir.");
+        System.out.println("1 -> Ver que torneos administro.");
+        System.out.println("2 -> Añadir a un entrenador a uno de mis torneos.");
+        System.out.println("3 -> Simular pelea.");
+        System.out.println("4 -> Exportar los datos de uno de mis torneos.");
+        System.out.println("5 -> Salir.");
         System.out.println("---------------------------------------------------------------");
+
+
+        Scanner sc = new Scanner(System.in);
+        int eleccion = sc.nextInt();
+        if(eleccion == 1){
+            List<Torneo> misTorneos = torneoServices.encontrarTorneosPorIdAdmin(UsuarioActivo.getInstancia().getId());
+
+            for(int i = 0; i < misTorneos.size(); i++){
+                System.out.println(misTorneos.get(i).getNombre());
+            }
+        }
     }
 
     public void cerrarPrograma() {

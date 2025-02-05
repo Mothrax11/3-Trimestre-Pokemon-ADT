@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /**
@@ -24,12 +26,17 @@ public class Torneo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Para que JPA genere el ID automáticamente
     private long id; // ID único del torneo
+
     @Column(name = "nombre")
     private String nombre; // Nombre del torneo
     @Column(name = "cod_region")
     private char codRegion; // Código de la región a la que pertenece el torneo
     @Column(name = "puntos_victoria")
     private float puntosVictoria; // Puntos asignados por cada victoria
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "admin_id")
+    private Entrenador admin;
 
     /**
      * Constructor que inicializa el nombre, el código de región y los puntos de
@@ -122,4 +129,13 @@ public class Torneo implements Serializable {
     public void setPuntosVictoria(float puntosVictoria) {
         this.puntosVictoria = puntosVictoria;
     }
+
+    public Entrenador getResponsable() {
+        return admin;
+    }
+
+    public void setResponsable(Entrenador responsable) {
+        this.admin = responsable;
+    }
+
 }

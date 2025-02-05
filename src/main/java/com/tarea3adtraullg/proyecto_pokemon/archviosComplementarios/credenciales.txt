@@ -1,7 +1,8 @@
-admingeneral Passw0rd AG -1
-admintorneos Passw0rd AT -2 
-mothrax 123 ENT
-mothrax2 123 ENT 
+admingeneral Passw0rd AG 
+admintorneos Passw0rd AT 
 iyan 123 ENT 
 pelayo 123 ENT 
 pelayo2 123 ENT 
+diego 123 ENT 
+mothrax 123 ENT
+beltran 123 AT  
