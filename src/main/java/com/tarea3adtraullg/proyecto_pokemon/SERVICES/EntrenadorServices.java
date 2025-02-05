@@ -12,15 +12,6 @@ public class EntrenadorServices {
     
     @Autowired
     private final RepoEntrenador repoEntrenador; 
-    @Autowired
-    private static EntrenadorServices instancia;
-
-    public static EntrenadorServices getInstancia(RepoEntrenador repoEntrenador) {
-        if (instancia == null) {
-            instancia = new EntrenadorServices(repoEntrenador);
-        }
-        return instancia;
-    }
 
     public EntrenadorServices (RepoEntrenador repoEntrenador){
         this.repoEntrenador = repoEntrenador;

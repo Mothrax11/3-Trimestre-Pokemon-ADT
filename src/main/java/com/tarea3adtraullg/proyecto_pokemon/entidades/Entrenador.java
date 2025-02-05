@@ -3,6 +3,7 @@ package com.tarea3adtraullg.proyecto_pokemon.entidades;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -10,6 +11,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -30,7 +34,15 @@ import jakarta.persistence.Transient;
 public class Entrenador implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id; // ID único del entrenador
+    private long idEntrenador; // ID único del entrenador
+
+    @ManyToMany
+    @JoinTable(
+        name = "torneo_administrador", // Nombre de la tabla de unión
+        joinColumns = @JoinColumn(name = "id_admin_torneo"), // Columna que referencia a Entrenador
+        inverseJoinColumns = @JoinColumn(name = "id_torneo") // Columna que referencia a Torneo
+    )
+    private List<Torneo> torneos = new ArrayList<>();
 
     @Column(name = "nombre")
     private String nombre; // Nombre del entrenador
@@ -44,18 +56,16 @@ public class Entrenador implements Serializable {
     @Column(name = "fechaCreacion")
     private String fechaCreacion; // Fecha de creación del carnet
     
-    @Column(name = "tipoUsuario")
+    @Column(name = "tipo_usuario")
     private String tipoUsr;
 
     @Transient
     private List<Combate> combatesEntrenador;
     @Transient
-    private List<Torneo> torneos;
-    @Transient
     private Carnet carnet; // Carnet del entrenador
 
-    @OneToMany(mappedBy = "admin")
-    private List<Torneo> torneosAdmin;
+    @OneToMany(mappedBy = "entrenador")
+    private List<TorneoAdministrador> torneoAdministradores;
     
     
         /**
@@ -63,7 +73,7 @@ public class Entrenador implements Serializable {
          */
         public Entrenador() {
 
-        }
+        } 
     
         /**
          * Constructor que inicializa los datos básicos del entrenador: nombre y
@@ -110,7 +120,7 @@ public class Entrenador implements Serializable {
      * @return ID del entrenador.
      */
     public long getId() {
-        return id;
+        return idEntrenador;
     }
 
     /**
@@ -119,7 +129,7 @@ public class Entrenador implements Serializable {
      * @param id Nuevo ID del entrenador.
      */
     public void setId(long id) {
-        this.id = id;
+        this.idEntrenador = id;
     }
 
     /**
@@ -235,6 +245,17 @@ public class Entrenador implements Serializable {
     public void setTorneos(List<Torneo> torneos) {
         this.torneos = torneos;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+    
 
     
 }

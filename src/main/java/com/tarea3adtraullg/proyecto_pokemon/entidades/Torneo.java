@@ -2,14 +2,15 @@ package com.tarea3adtraullg.proyecto_pokemon.entidades;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 /**
@@ -25,8 +26,7 @@ public class Torneo implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Para que JPA genere el ID automáticamente
-    private long id; // ID único del torneo
-
+    private long idTorneo; // ID único del torneo
     @Column(name = "nombre")
     private String nombre; // Nombre del torneo
     @Column(name = "cod_region")
@@ -34,9 +34,8 @@ public class Torneo implements Serializable {
     @Column(name = "puntos_victoria")
     private float puntosVictoria; // Puntos asignados por cada victoria
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "admin_id")
-    private Entrenador admin;
+    @ManyToMany(mappedBy = "torneos")
+    private List<Entrenador> entrenadores = new ArrayList<>();
 
     /**
      * Constructor que inicializa el nombre, el código de región y los puntos de
@@ -64,7 +63,7 @@ public class Torneo implements Serializable {
      * @return ID del torneo.
      */
     public long getId() {
-        return id;
+        return idTorneo;
     }
 
     /**
@@ -73,7 +72,7 @@ public class Torneo implements Serializable {
      * @param id ID único del torneo.
      */
     public void setId(long id) {
-        this.id = id;
+        this.idTorneo = id;
     }
 
     /**
@@ -129,13 +128,4 @@ public class Torneo implements Serializable {
     public void setPuntosVictoria(float puntosVictoria) {
         this.puntosVictoria = puntosVictoria;
     }
-
-    public Entrenador getResponsable() {
-        return admin;
-    }
-
-    public void setResponsable(Entrenador responsable) {
-        this.admin = responsable;
-    }
-
 }

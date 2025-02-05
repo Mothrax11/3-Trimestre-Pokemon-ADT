@@ -38,8 +38,7 @@ public class TorneoServices {
         return repoTorneo.findAll();
     }
 
-    public List<Torneo> encontrarTorneosPorIdAdmin(long idAdmin) {
-        return repoTorneo.encontrarTorneosPorIdAdmin(idAdmin);
-    }
+
+
 
 }

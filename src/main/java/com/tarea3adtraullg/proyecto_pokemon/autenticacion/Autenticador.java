@@ -22,8 +22,9 @@ import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoEntrenador;
 
 @Component
 public class Autenticador {
-
+    @Autowired
     private final RepoEntrenador repoEntrenador;
+    @Autowired
     private final EntrenadorServices entrenadorServices;
     private boolean registroExitoso = false;
 
@@ -66,6 +67,40 @@ public class Autenticador {
             } catch (IOException e) {
                 System.out.println(e.getMessage());
                 return false; 
+            }
+        }
+    }
+
+    public boolean registrarAdministradorTorneo(String nombre, String pass, String nac, String tipoUsr) {
+        if (usuarioExistente(nombre, pass)) {
+            return false;
+        } else {
+            try {
+                BufferedWriter bf = new BufferedWriter(new FileWriter(
+                        new File("src/main/java/com/tarea3adtraullg/proyecto_pokemon/archviosComplementarios",
+                                "credenciales.txt"),
+                        true));
+                bf.write(nombre);
+                bf.write(" ");
+                bf.write(pass);
+                bf.write(" ");
+                bf.write(tipoUsr);
+                bf.write(" ");
+                bf.newLine();
+                bf.close();
+                Entrenador nuevoEntrenador = new Entrenador(nombre, pass, nac, tipoUsr);
+                entrenadorServices.crearEntrenador(nuevoEntrenador);
+                LocalDate fechaC = LocalDate.now();
+                Carnet c = new Carnet();
+                c.setIdEntrenador(entrenadorServices.buscarPorNombreYContrasena(nombre, pass).getId());
+                c.setNumVictorias(0);
+                c.setPuntos(0);
+                c.setFechaExpedicion(fechaC);
+                carnetServices.crearCarnet(c);
+                return true;
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                return false;
             }
         }
     }
