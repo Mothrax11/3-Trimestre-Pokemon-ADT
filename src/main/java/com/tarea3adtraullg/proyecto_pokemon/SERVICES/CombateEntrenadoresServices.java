@@ -17,7 +17,6 @@ public class CombateEntrenadoresServices {
     public CombateEntrenadoresServices(RepoCombateEntrenadores repoCombateEntrenadores) {
        this.repoCombateEntrenadores = repoCombateEntrenadores;
     }
-
     public void crearCombateEntrenadores(CombateEntrenadores combateEntenadores) {
         repoCombateEntrenadores.save(combateEntenadores);
     }

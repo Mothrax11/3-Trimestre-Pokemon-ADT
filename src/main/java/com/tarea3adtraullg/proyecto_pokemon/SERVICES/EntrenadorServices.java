@@ -40,5 +40,9 @@ public class EntrenadorServices {
     public Entrenador buscarPorNombreYContrasena(String nombre, String contrasena) {
          return repoEntrenador.findByNombreAndPassword(nombre, contrasena);
     }
+
+    public Entrenador findByNombreAndReg(String nombre, String reg){
+        return repoEntrenador.findByNombreAndReg(nombre, reg);
+    }
     
 }

@@ -3,12 +3,6 @@ package com.tarea3adtraullg.proyecto_pokemon.entidades;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.EntrenadorServices;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

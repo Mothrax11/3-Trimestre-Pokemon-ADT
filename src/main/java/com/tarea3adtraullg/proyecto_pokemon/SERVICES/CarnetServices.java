@@ -33,11 +33,11 @@ public class CarnetServices {
         repoCarnet.save(carnet);
     }
 
-    public void eliminarCarnetPorId(int idCarnet) {
+    public void eliminarCarnetPorId(long idCarnet) {
         repoCarnet.deleteById(idCarnet);
     }
 
-    public Carnet obtenerCarnetPorId(int idCarnet) {
+    public Carnet obtenerCarnetPorId(long idCarnet) {
         return repoCarnet.findById(idCarnet).orElse(null);
     }
 
