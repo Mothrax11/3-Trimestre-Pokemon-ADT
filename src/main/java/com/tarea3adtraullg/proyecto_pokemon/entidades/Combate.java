@@ -1,6 +1,7 @@
 package com.tarea3adtraullg.proyecto_pokemon.entidades;
 
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import jakarta.persistence.Column;
@@ -14,7 +15,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "combate")
-public class Combate {
+public class Combate implements Serializable { 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Para que JPA genere el ID automáticamente

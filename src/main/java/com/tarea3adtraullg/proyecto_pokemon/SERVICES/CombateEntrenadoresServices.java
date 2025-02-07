@@ -35,5 +35,5 @@ public class CombateEntrenadoresServices {
 
     public List<CombateEntrenadores> obtenerTodosLosCombateEntrenadores() {
         return repoCombateEntrenadores.findAll();
-    }  
+    }
 }

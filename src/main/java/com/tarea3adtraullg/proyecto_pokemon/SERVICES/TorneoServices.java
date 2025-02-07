@@ -3,6 +3,7 @@ package com.tarea3adtraullg.proyecto_pokemon.SERVICES;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.tarea3adtraullg.proyecto_pokemon.entidades.Torneo;
@@ -37,6 +38,11 @@ public class TorneoServices {
     public List<Torneo> obtenerTodosLosTorneos() {
         return repoTorneo.findAll();
     }
+
+    public List<Torneo> buscarTorneosPorIdEntrenadorParticipante(long idEntrenador){
+        return repoTorneo.buscarTorneosPorIdEntrenadorParticipante(idEntrenador);
+    }
+ 
 
 
 

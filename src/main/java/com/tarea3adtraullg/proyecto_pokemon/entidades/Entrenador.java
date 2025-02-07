@@ -8,6 +8,7 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,7 +37,7 @@ public class Entrenador implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idEntrenador; // ID único del entrenador
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "torneo_administrador", // Nombre de la tabla de unión
         joinColumns = @JoinColumn(name = "id_admin_torneo"), // Columna que referencia a Entrenador
@@ -64,7 +65,7 @@ public class Entrenador implements Serializable {
     @Transient
     private Carnet carnet; // Carnet del entrenador
 
-    @OneToMany(mappedBy = "entrenador")
+    @OneToMany(mappedBy = "entrenador", fetch = FetchType.EAGER)
     private List<TorneoAdministrador> torneoAdministradores;
     
     

@@ -1,1 +1,68 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><carnet><id>0</id><fechaexp>05 02 2025</fechaexp><entrenador><nombre>mothrax</nombre><nacionalidad>ES</nacionalidad><hoy/><puntos>0</puntos></entrenador><torneos/></carnet>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<carnet>
+	<id>
+		1
+	</id>
+	<fechaexp>
+		07 02 2025
+	</fechaexp>
+	<entrenador>
+		<nombre>
+			mothrax
+		</nombre>
+		<nacionalidad>
+			ES
+		</nacionalidad>
+		<hoy>
+			06/02/2025
+		</hoy>
+		<puntos>
+			100.0
+		</puntos>
+	</entrenador>
+	<torneos>
+		<torneo>
+			<nombre>
+				TorneoPrueba1
+			</nombre>
+			<region>
+				C
+			</region>
+			<combates>
+				<combate>
+					<id>
+						1
+					</id>
+					<fecha>
+						2025-02-06
+					</fecha>
+					<resultado>
+						Derrota/No participado
+					</resultado>
+				</combate>
+				<combate>
+					<id>
+						2
+					</id>
+					<fecha>
+						2025-02-06
+					</fecha>
+					<resultado>
+						Victoria
+					</resultado>
+				</combate>
+				<combate>
+					<id>
+						3
+					</id>
+					<fecha>
+						2025-02-06
+					</fecha>
+					<resultado>
+						Derrota/No participado
+					</resultado>
+				</combate>
+			</combates>
+		</torneo>
+	</torneos>
+</carnet>

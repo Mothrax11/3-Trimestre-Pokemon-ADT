@@ -1,6 +1,19 @@
 package com.tarea3adtraullg.proyecto_pokemon.entidades;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.stereotype.Component;
+
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.EntrenadorServices;
+
+@Component
 public class UsuarioActivo {
+
+    @Autowired
+    EntrenadorServices entrenadorServices;
 
     private static UsuarioActivo instancia;
     private long id;
@@ -10,6 +23,7 @@ public class UsuarioActivo {
     private String fechaCreacion;
     private String tipoUsr;
     private Carnet carnet;
+    private List<Torneo> torneos = new ArrayList<>();
 
     // Constructor privado
     private UsuarioActivo() {
@@ -24,6 +38,7 @@ public class UsuarioActivo {
         this.fechaCreacion = entrenador.getFechaCreacion();
         this.tipoUsr = entrenador.getTipoUsr();
         this.carnet = entrenador.getCarnet();
+        this.torneos = entrenador.getTorneos();
     }
 
     public static UsuarioActivo getInstancia() {
@@ -88,5 +103,9 @@ public class UsuarioActivo {
 
     public void setCarnet(Carnet carnet) {
         this.carnet = carnet;
+    }
+
+    public List<Torneo> getTorneos() {
+        return torneos;
     }
 }

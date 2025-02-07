@@ -141,6 +141,7 @@ public class Autenticador {
             usuarioActivo.setCarnet(entrenador.getCarnet());
 
             System.out.println("Usuario validado en archivo y base de datos: " + usuarioActivo.getNombre());
+            System.out.println("Se iniciará sesión.");
         }
 
 

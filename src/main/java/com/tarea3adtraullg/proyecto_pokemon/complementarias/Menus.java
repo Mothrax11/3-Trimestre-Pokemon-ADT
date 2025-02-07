@@ -54,6 +54,9 @@ public class Menus {
     @Autowired
     CarnetServices carnetServices;
 
+    @Autowired
+    Exportar exportar;
+
     /**
      * Muestra el menú principal del sistema, donde el usuario puede elegir entre
      * registrarse, iniciar sesión o iniciar sesión como invitado.
@@ -85,6 +88,7 @@ public class Menus {
                     login = true;
                 }
             }
+        
 
             if(UsuarioActivo.getInstancia().getNombre().equals("admingeneral") && UsuarioActivo.getInstancia().getContrasena().equals("Passw0rd")){
                 mostrarMenuAdminGeneral(torneos, torneoDefault);
@@ -244,7 +248,7 @@ public class Menus {
         boolean booleanTorVal = false;
 
         if (choice2 == 1) {
-            while (!booleanTorVal) {
+            while (booleanTorVal == false) {
                 Scanner topSc = new Scanner(System.in);
                 System.out.print("Nombre del torneo: ");
                 String nombreTorneo = topSc.next();
@@ -272,63 +276,64 @@ public class Menus {
                         break;
                 }
 
-                // Revisa que el nuevo torneo no tiene el nombre de alguno ya creado
                 List<Torneo> todosLosTorneos = torneoServices.obtenerTodosLosTorneos();
+                boolean torneoExiste = false;
                 for (int i = 0; i < todosLosTorneos.size(); i++) {
-                    if (todosLosTorneos.get(i).getNombre().equals(nombreTorneo)
-                            && (todosLosTorneos.get(i).getCodRegion() == codRegion)) {
-                        System.out.println(
-                                "Nombre del torneo con esa región en uso, escriba otro nombre o región.");
-                    } else {
-                        booleanTorVal = true;
-                    }
+                    if (todosLosTorneos.get(i).getNombre().equals(nombreTorneo) && (todosLosTorneos.get(i).getCodRegion() == codRegion)) {
+                        System.out.println( "Nombre del torneo con esa región en uso, escriba otro nombre o región.");
+                        torneoExiste = true;
+                    }  
                 }
 
-                System.out.print("Cuantos puntos se llevara el ganador: ");
-                float puntosVictoria = topSc.nextInt();
-                System.out.println("El torneo " + nombreTorneo + " ha sido creado con éxito");
-                Torneo torneo = new Torneo(nombreTorneo, codRegion, puntosVictoria);
-                
-                ArchivadorTorneos.Archivador(torneoDefault);
+                if(torneoExiste == false){
+                    booleanTorVal = true;
+                    System.out.print("Cuantos puntos se llevara el ganador: ");
+                    float puntosVictoria = topSc.nextInt();
+                    System.out.println("El torneo " + nombreTorneo + " ha sido creado con éxito");
+                    Torneo torneo = new Torneo(nombreTorneo, codRegion, puntosVictoria);
 
-                boolean adminTvalido = false;
+                    ArchivadorTorneos.Archivador(torneoDefault);
 
-                while (adminTvalido == false) {
-                    System.out.print("¿Cual es el nombre del administrador del torneo?: ");
-                    String nombreAT = topSc.next();
-                    System.out.print("¿Cual es la contraseña del administrador del torneo?: ");
-                    String passAT = topSc.next();
-                    Entrenador adminDelTorneo = entrenadorServices.buscarPorNombreYContrasena(nombreAT, passAT);
-                    if (adminDelTorneo == null) {
-                        System.out.println("Error en la seleccion del administrador del torneo.");
-                        System.out.println("Por favor, seleccione otro en su lugar o cree uno nuevo.");
-                    } else if (adminDelTorneo.getTipoUsr() == "ENT") {
-                        System.out.println("Error en la seleccion del administrador del torneo.");
-                        System.out.println("Por favor, seleccione otro en su lugar o cree uno nuevo.");
-                    } else {
-                        adminTvalido = true;
-                        torneoServices.crearTorneo(torneo);
-                        TorneoAdministrador torneoAdmin = new TorneoAdministrador();
-                        torneoAdmin.setEntrenador(adminDelTorneo);
-                        torneoAdmin.setTorneo(torneo);
-                        torneoAdministradorServices.crearTorneoAdministrador(torneoAdmin);
-                        System.out.println("El administrador del torneo " + torneo.getNombre() + " es " + adminDelTorneo.getNombre());
-                        for (int i = 0; i < 3; i++) {
-                            Combate combate = new Combate();
-                            combate.setFecha(LocalDate.now());
-                            combate.setTorneo(torneo);
-                            CombateEntrenadores combateEntrenadores = new CombateEntrenadores();
-                            combateEntrenadores.setCombate(combate);
-                            combateEntrenadores.setIdTorneo(torneo.getIdTorneo());
-                            combateServices.crearCombate(combate);
-                            combateEntrenadoresServices.crearCombateEntrenadores(combateEntrenadores);
+                    boolean adminTvalido = false;
 
+                    while (adminTvalido == false) {
+                        System.out.print("¿Cual es el nombre del administrador del torneo?: ");
+                        String nombreAT = topSc.next();
+                        System.out.print("¿Cual es la contraseña del administrador del torneo?: ");
+                        String passAT = topSc.next();
+                        Entrenador adminDelTorneo = entrenadorServices.buscarPorNombreYContrasena(nombreAT, passAT);
+                        if (adminDelTorneo == null) {
+                            System.out.println("Error en la seleccion del administrador del torneo.");
+                            System.out.println("Por favor, seleccione otro en su lugar o cree uno nuevo.");
+                        } else if (adminDelTorneo.getTipoUsr() == "ENT") {
+                            System.out.println("Error en la seleccion del administrador del torneo.");
+                            System.out.println("Por favor, seleccione otro en su lugar o cree uno nuevo.");
+                        } else {
+                            adminTvalido = true;
+                            torneoServices.crearTorneo(torneo);
+                            TorneoAdministrador torneoAdmin = new TorneoAdministrador();
+                            torneoAdmin.setEntrenador(adminDelTorneo);
+                            torneoAdmin.setTorneo(torneo);
+                            torneoAdministradorServices.crearTorneoAdministrador(torneoAdmin);
+                            System.out.println("El administrador del torneo " + torneo.getNombre() + " es "
+                                    + adminDelTorneo.getNombre());
+                            for (int k = 0; k < 3; k++) {
+                                Combate combate = new Combate();
+                                combate.setFecha(LocalDate.now());
+                                combate.setTorneo(torneo);
+                                CombateEntrenadores combateEntrenadores = new CombateEntrenadores();
+                                combateEntrenadores.setCombate(combate);
+                                combateEntrenadores.setIdTorneo(torneo.getIdTorneo());
+                                combateServices.crearCombate(combate);
+                                combateEntrenadoresServices.crearCombateEntrenadores(combateEntrenadores);
+                            }
                         }
+                        mostrarMenuAdminGeneral(torneos, torneoDefault);
+                        torneos.add(torneo);
                     }
                 }
-                torneos.add(torneo);
-                booleanTorVal = true;
             }
+            
         } else if(choice2 == 3){
             registrarAT(torneos);
         } else if(choice2 == 4){
@@ -352,8 +357,7 @@ public class Menus {
         int eleccion = sc.nextInt();
 
         if (eleccion == 1) {
-            Exportar ex = new Exportar(UsuarioActivo.getInstancia());
-            ex.ejecutar();
+            exportar.ejecutar();
             System.out.println("Carnet exportado con éxito!");
             mostrarMenuEntrenador(torneos);
         }
@@ -446,6 +450,11 @@ public class Menus {
 
                 CombateEntrenadores c2 = combateEntrenadoresEspecifico.get(1);
                 c2.setIdEntrenador1(entrenadorAInscribir.getId());
+
+                List<Torneo> torneosEntrenador = entrenadorAInscribir.getTorneos();
+                torneosEntrenador.add(torneoAApuntar);
+                entrenadorAInscribir.setTorneos(torneosEntrenador);
+                entrenadorServices.actualizarEntrenador(entrenadorAInscribir.getId(), entrenadorAInscribir);
                 
                 combateEntrenadoresServices.actualizarCombateEntrenadores(c1);
                 combateEntrenadoresServices.actualizarCombateEntrenadores(c2);
@@ -483,6 +492,23 @@ public class Menus {
             }
         } else if(eleccion == 3){
             pelear();
+        } else if (eleccion == 4){
+            System.out.println("Que torneo quieres exportar?:");
+            List<TorneoAdministrador> allTorneos = torneoAdministradorServices.obtenerTodosLosTorneoAdministradores();
+            List<Torneo> misTorneos = new ArrayList<>();
+            for (int i = 0; i < allTorneos.size(); i++) {
+                if (allTorneos.get(i).getEntrenador().getId() == UsuarioActivo.getInstancia().getId()) {
+                    misTorneos.add(allTorneos.get(i).getTorneo());
+                }
+            }
+
+            for (int i = 0; i < misTorneos.size(); i++) {
+                System.out.println((i + 1) + " " + misTorneos.get(i).getNombre());
+            }
+
+            int eleccionTorneoExportar = sc.nextInt();
+            ArchivadorTorneos.Archivador(misTorneos.get(eleccionTorneoExportar - 1));
+            System.out.println("El torneo " + misTorneos.get(eleccionTorneoExportar - 1).getNombre()  + "exportado con exito!");
         }
     }
 

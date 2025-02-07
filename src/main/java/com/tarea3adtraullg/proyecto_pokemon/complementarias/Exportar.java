@@ -1,6 +1,13 @@
 package com.tarea3adtraullg.proyecto_pokemon.complementarias;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.*;
+
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.CarnetServices;
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.CombateEntrenadoresServices;
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.EntrenadorServices;
+import com.tarea3adtraullg.proyecto_pokemon.SERVICES.TorneoServices;
 import com.tarea3adtraullg.proyecto_pokemon.entidades.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -13,6 +20,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Clase encargada de exportar la información de un entrenador en un formato
@@ -23,15 +31,24 @@ import java.util.ArrayList;
  * 
  * @author raullg97
  */
+@Component
 public class Exportar {
 
-    private String nombre;
-    private String nacionalidad;
-    private long puntos;
-    private String fechaCreacion;
-    private ArrayList<Torneo> torneos = new ArrayList<>();
-    private long idEntrenador;
-    private Entrenador entrenador;
+    @Autowired
+    CarnetServices carnetServices;
+
+    @Autowired
+    UsuarioActivo usuarioActivo;
+
+    @Autowired
+    EntrenadorServices entrenadorServices;
+
+    @Autowired
+    TorneoServices torneoServices;
+
+    @Autowired
+    CombateEntrenadoresServices combateEntrenadoresServices;
+    
 
     /**
      * Constructor que inicializa los valores del objeto Exportar a partir de un
@@ -39,14 +56,9 @@ public class Exportar {
      * 
      * @param entrenador El objeto Entrenador del que se exportarán los datos.
      */
-    public Exportar(UsuarioActivo usuarioActivo) {
-        //this.entrenador;
-        this.nombre = usuarioActivo.getNombre();
-        this.idEntrenador = usuarioActivo.getId();
-        this.nacionalidad = usuarioActivo.getNacionalidad();
-        //this.puntos = usuarioActivo.getPuntos();
-        this.fechaCreacion = usuarioActivo.getFechaCreacion();
-        //this.torneos = entrenador.getTorneos();
+
+    public Exportar() {
+        
     }
 
     /**
@@ -61,7 +73,8 @@ public class Exportar {
             docBuilder = factory.newDocumentBuilder();
             DOMImplementation domImplementation = docBuilder.getDOMImplementation();
             Document document = domImplementation.createDocument(null, "carnet", null);
-            crearXML(document);
+            Entrenador entrenadorAExportar = entrenadorServices.obtenerEntrenadorPorId(usuarioActivo.getId());
+            crearXML(document, entrenadorAExportar);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
@@ -73,44 +86,76 @@ public class Exportar {
      * 
      * @param doc El objeto Document que contiene el documento XML.
      */
-    public void crearXML(Document doc) {
+    public void crearXML(Document doc, Entrenador entrenador) { 
         doc.setXmlVersion("1.0");
 
         LocalDate ld = LocalDate.now();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd MM yyyy");
         String dateString = ld.format(dateTimeFormatter);
-        String dateStrinUsr = fechaCreacion;
+        String dateStrinUsr = UsuarioActivo.getInstancia().getFechaCreacion();
 
         // Crear el elemento ID del entrenador en el documento XML
-        crearElemento("id", Long.toString(getIdEntrenador()), doc, doc.getDocumentElement());
+        crearElemento("id", Long.toString(UsuarioActivo.getInstancia().getId()), doc, doc.getDocumentElement());
         // Crear el elemento fecha de expiración
         crearElemento("fechaexp", dateString, doc, doc.getDocumentElement());
 
         // Crear el nodo del entrenador
         Element elementEntrenador = doc.createElement("entrenador");
         doc.getDocumentElement().appendChild(elementEntrenador);
-        crearElemento("nombre", nombre, doc, elementEntrenador);
-        crearElemento("nacionalidad", nacionalidad, doc, elementEntrenador);
+        crearElemento("nombre", UsuarioActivo.getInstancia().getNombre(), doc, elementEntrenador);
+        crearElemento("nacionalidad", UsuarioActivo.getInstancia().getNacionalidad(), doc, elementEntrenador);
         crearElemento("hoy", dateStrinUsr, doc, elementEntrenador);
-        crearElemento("puntos", Long.toString(puntos), doc, elementEntrenador);
+        crearElemento("puntos", Float.toString(carnetServices.obtenerCarnetPorId(UsuarioActivo.getInstancia().getId()).getPuntos()), doc, elementEntrenador);
 
         // Crear el nodo de torneos
         Element elementoTorneos = doc.createElement("torneos");
         doc.getDocumentElement().appendChild(elementoTorneos);
 
-        /*
-        for (int i = 0; i < entrenador.getTorneos().size(); i++) {
+        List<Torneo> torneos = torneoServices.buscarTorneosPorIdEntrenadorParticipante(UsuarioActivo.getInstancia().getId());
+        System.out.println(torneos.size());
+        for (int i = 0; i < torneos.size(); i++) {
+            // Crear elemento para el torneo
             Element elementoTorneo = doc.createElement("torneo");
             elementoTorneos.appendChild(elementoTorneo);
             crearElemento("nombre", torneos.get(i).getNombre(), doc, elementoTorneo);
             String regionTorneo = Character.toString(torneos.get(i).getCodRegion());
             crearElemento("region", regionTorneo, doc, elementoTorneo);
+
+            // Crear nodo contenedor para los combates del torneo
+            Element elementoCombates = doc.createElement("combates");
+            elementoTorneo.appendChild(elementoCombates);
+
+            // Iterar sobre la lista de combates del torneo
+            List<Combate> combates = torneos.get(i).getCombates();
+            if (combates != null) {
+                for (Combate combate : combates) {
+                    Element elementoCombate = doc.createElement("combate");
+                    elementoCombates.appendChild(elementoCombate);
+                    crearElemento("id", String.valueOf(combate.getId()), doc, elementoCombate);
+                    crearElemento("fecha", combate.getFecha().toString(), doc, elementoCombate);
+                    List<CombateEntrenadores> combateEntrenadores = combateEntrenadoresServices.obtenerTodosLosCombateEntrenadores();
+                    List<CombateEntrenadores> combatesDelTorneo = new ArrayList<>();
+
+                    for(int k = 0; k < combateEntrenadores.size(); k++){
+                        if(combateEntrenadores.get(k).getCombate().getId() == combate.getId()){
+                            combatesDelTorneo.add(combateEntrenadores.get(k));
+                        }
+                    }
+
+                    for(int k = 0; k < combatesDelTorneo.size(); k++){
+                        if(combatesDelTorneo.get(i).getIdGanador() == UsuarioActivo.getInstancia().getId()){
+                            crearElemento("resultado", "Victoria", doc, elementoCombate);
+                        } else {
+                            crearElemento("resultado", "Derrota/No participado", doc, elementoCombate);
+                        }
+                    }
+                }
+            }
         }
-         */
 
         // Guardar el archivo XML
         Source source = new DOMSource(doc);
-        Result result = new StreamResult(new File(nombre + ".xml"));
+        Result result = new StreamResult(new File(UsuarioActivo.getInstancia().getNombre() + ".xml"));
 
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -133,59 +178,10 @@ public class Exportar {
      * @param document El objeto Document donde se insertará el nuevo elemento.
      * @param raiz     El nodo raíz donde se insertará el nuevo elemento.
      */
-    private static void crearElemento(String dato, String valor, Document document, Element raiz) {
+    private void crearElemento(String dato, String valor, Document document, Element raiz) {
         Element element = document.createElement(dato);
         Text text = document.createTextNode(valor);
         raiz.appendChild(element);
         element.appendChild(text);
-    }
-
-    // Métodos getters y setters
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getNacionalidad() {
-        return nacionalidad;
-    }
-
-    public void setNacionalidad(String nacionalidad) {
-        this.nacionalidad = nacionalidad;
-    }
-
-    public long getPuntos() {
-        return puntos;
-    }
-
-    public void setPuntos(long puntos) {
-        this.puntos = puntos;
-    }
-
-    public String getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(String fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
-    public ArrayList<Torneo> getTorneos() {
-        return torneos;
-    }
-
-    public void setTorneos(ArrayList<Torneo> torneos) {
-        this.torneos = torneos;
-    }
-
-    public long getIdEntrenador() {
-        return idEntrenador;
-    }
-
-    public void setIdEntrenador(long idEntrenador) {
-        this.idEntrenador = idEntrenador;
     }
 }
