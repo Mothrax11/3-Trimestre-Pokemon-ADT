@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.*;
 
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.CarnetServices;
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.CombateEntrenadoresServices;
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.EntrenadorServices;
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.TorneoServices;
+import com.tarea3adtraullg.proyecto_pokemon.services.CarnetServices;
+import com.tarea3adtraullg.proyecto_pokemon.services.CombateEntrenadoresServices;
+import com.tarea3adtraullg.proyecto_pokemon.services.EntrenadorServices;
+import com.tarea3adtraullg.proyecto_pokemon.services.TorneoServices;
 import com.tarea3adtraullg.proyecto_pokemon.entidades.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -48,14 +48,6 @@ public class Exportar {
 
     @Autowired
     CombateEntrenadoresServices combateEntrenadoresServices;
-    
-
-    /**
-     * Constructor que inicializa los valores del objeto Exportar a partir de un
-     * objeto Entrenador.
-     * 
-     * @param entrenador El objeto Entrenador del que se exportarán los datos.
-     */
 
     public Exportar() {
         
@@ -105,7 +97,12 @@ public class Exportar {
         crearElemento("nombre", UsuarioActivo.getInstancia().getNombre(), doc, elementEntrenador);
         crearElemento("nacionalidad", UsuarioActivo.getInstancia().getNacionalidad(), doc, elementEntrenador);
         crearElemento("hoy", dateStrinUsr, doc, elementEntrenador);
-        crearElemento("puntos", Float.toString(carnetServices.obtenerCarnetPorId(UsuarioActivo.getInstancia().getId()).getPuntos()), doc, elementEntrenador);
+        if(carnetServices.obtenerCarnetPorId(UsuarioActivo.getInstancia().getId()) == null){
+            crearElemento("puntos", Float.toString(0f) , doc, elementEntrenador);
+        } else {
+            crearElemento("puntos", Float.toString(carnetServices.obtenerCarnetPorId(UsuarioActivo.getInstancia().getId()).getPuntos()), doc, elementEntrenador);
+        }
+
 
         // Crear el nodo de torneos
         Element elementoTorneos = doc.createElement("torneos");
@@ -143,7 +140,7 @@ public class Exportar {
                     }
 
                     for(int k = 0; k < combatesDelTorneo.size(); k++){
-                        if(combatesDelTorneo.get(i).getIdGanador() == UsuarioActivo.getInstancia().getId()){
+                        if(combatesDelTorneo.get(k).getIdGanador() == UsuarioActivo.getInstancia().getId()){
                             crearElemento("resultado", "Victoria", doc, elementoCombate);
                         } else {
                             crearElemento("resultado", "Derrota/No participado", doc, elementoCombate);

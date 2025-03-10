@@ -1,4 +1,4 @@
-package com.tarea3adtraullg.proyecto_pokemon.SERVICES;
+package com.tarea3adtraullg.proyecto_pokemon.services;
 
 import com.tarea3adtraullg.proyecto_pokemon.entidades.TorneoAdministrador;
 import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoTorneoAdministrador;

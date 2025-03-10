@@ -1,9 +1,8 @@
-package com.tarea3adtraullg.proyecto_pokemon.SERVICES;
+package com.tarea3adtraullg.proyecto_pokemon.services;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.tarea3adtraullg.proyecto_pokemon.entidades.Torneo;

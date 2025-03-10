@@ -1,7 +1,9 @@
-package com.tarea3adtraullg.proyecto_pokemon.SERVICES;
-import java.lang.classfile.instruction.ReturnInstruction;
+package com.tarea3adtraullg.proyecto_pokemon.services;
 import java.util.List;
 
+import com.db4o.Db4oEmbedded;
+import com.db4o.ObjectContainer;
+import com.db4o.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.tarea3adtraullg.proyecto_pokemon.entidades.Entrenador;
@@ -9,9 +11,11 @@ import com.tarea3adtraullg.proyecto_pokemon.repositorios.RepoEntrenador;
 
 @Service
 public class EntrenadorServices {
+
+
     
     @Autowired
-    private final RepoEntrenador repoEntrenador; 
+    private final RepoEntrenador repoEntrenador;
 
     public EntrenadorServices (RepoEntrenador repoEntrenador){
         this.repoEntrenador = repoEntrenador;
@@ -44,5 +48,4 @@ public class EntrenadorServices {
     public Entrenador findByNombreAndReg(String nombre, String reg){
         return repoEntrenador.findByNombreAndReg(nombre, reg);
     }
-    
 }

@@ -1,14 +1,12 @@
 package com.tarea3adtraullg.proyecto_pokemon.complementarias;
 
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.CarnetServices;
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.CombateEntrenadoresServices;
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.CombateServices;
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.EntrenadorServices;
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.TorneoAdministradorServices;
-import com.tarea3adtraullg.proyecto_pokemon.SERVICES.TorneoServices;
+import com.mongodb.client.MongoClient;
+import com.tarea3adtraullg.proyecto_pokemon.dao.DAO_DatosTorneoMongo;
+import com.tarea3adtraullg.proyecto_pokemon.services.*;
 import com.tarea3adtraullg.proyecto_pokemon.autenticacion.*;
 import com.tarea3adtraullg.proyecto_pokemon.entidades.*;
 
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +17,6 @@ import java.util.Scanner;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration.EnableTransactionManagementConfiguration.CglibAutoProxyConfiguration;
 import org.springframework.stereotype.Component;
 
 /**
@@ -57,10 +54,14 @@ public class Menus {
     @Autowired
     Exportar exportar;
 
+    @Autowired
+    Db4oServices db4oServices;
     /**
      * Muestra el menú principal del sistema, donde el usuario puede elegir entre
      * registrarse, iniciar sesión o iniciar sesión como invitado.
      */
+
+
     public void menuPrincipal() {
         System.out.print("\033[H\033[2J");
         ArrayList<Torneo> torneos = new ArrayList<>();
@@ -90,7 +91,7 @@ public class Menus {
             }
         
 
-            if(UsuarioActivo.getInstancia().getNombre().equals("admingeneral") && UsuarioActivo.getInstancia().getContrasena().equals("Passw0rd")){
+            if(UsuarioActivo.getInstancia().getNombre().equals("a") && UsuarioActivo.getInstancia().getContrasena().equals("a")){
                 mostrarMenuAdminGeneral(torneos, torneoDefault);
             } else if(UsuarioActivo.getInstancia().getTipoUsr().equals("ENT")){
                mostrarMenuEntrenador(torneos);
@@ -216,11 +217,13 @@ public class Menus {
         String nombre = sc.next();
         System.out.println("¿Cuál es tu contraseña?");
         String contraseña = sc.next();
-        if (nombre.equals("admingeneral") && contraseña.equals("Passw0rd")) {
+        if (nombre.equals("a") && contraseña.equals("a")) {
+            UsuarioActivo.getInstancia().setNombre("a");
+            UsuarioActivo.getInstancia().setContrasena("a");
             mostrarMenuAdminGeneral(torneos, torneoDefault);
             return true;
         } else {
-            if (autenticator.comprobarUsuario(nombre, contraseña, "ENT") || autenticator.comprobarUsuario(nombre, contraseña, "AT")) {
+            if (db4oServices.comprobarUsuario(nombre, contraseña, "ENT") || db4oServices.comprobarUsuario(nombre, contraseña, "AT")) {
                 UsuarioActivo act = new UsuarioActivo(entrenadorServices.buscarPorNombreYContrasena(nombre, contraseña));
                 return true;
             }
@@ -240,10 +243,12 @@ public class Menus {
         System.out.println("1 -> Crear torneo.");
         System.out.println("2 -> Iniciar sesion.");
         System.out.println("3 -> Crear nuevo AT.");
-        System.out.println("4 -> Cerrar sesion.");
+        System.out.println("4 -> Gestionar usuarios.");
+        System.out.println("5 -> Cerrar sesion.");
+        System.out.println("6 -> Consultar datos de torneo.");
 
-        UsuarioActivo.getInstancia().setNombre("admingeneral");
-        UsuarioActivo.getInstancia().setContrasena("Passw0rd");
+        UsuarioActivo.getInstancia().setNombre("a");
+        UsuarioActivo.getInstancia().setContrasena("a");
         int choice2 = sc.nextInt();
         boolean booleanTorVal = false;
 
@@ -336,8 +341,105 @@ public class Menus {
             
         } else if(choice2 == 3){
             registrarAT(torneos);
+
         } else if(choice2 == 4){
+            System.out.println("¿Que te gusataría hacer?");
+            System.out.println("1 - Listar entrenadores.");
+            System.out.println("2 - Eliminar un entrenador.");
+            System.out.println("3 - Modificar la contraseña de un entrenador.");
+            int choice3 = sc.nextInt();
+
+                if(choice3 == 1){
+                    db4oServices.listarEntrenadoresDB4O();
+                } else if(choice3 == 2){
+                    System.out.println("Introduzca las credenciales del usuario a eliminar:");
+                    System.out.println("Nombre:");
+                    String nombreBorrar = sc.next();
+                    System.out.println("Contraseña:");
+                    String passwordBorrar = sc.next();
+                    db4oServices.eliminarUsuarioDB4O(nombreBorrar, passwordBorrar);
+                } else if(choice3 == 3){
+                    System.out.println("Introduzca las credenciales del usuario al que le quiere cambiar la contraseña:");
+                    System.out.println("Nombre:");
+                    String nombreActualizar = sc.next();
+                    System.out.println("Contraseña:");
+                    String passwordActualizar = sc.next();
+                    System.out.println("Nueva contraseña:");
+                    String newPasswordActualizar = sc.next();
+                    db4oServices.cambiarPassword(nombreActualizar, passwordActualizar, newPasswordActualizar);
+                }
+            mostrarMenuAdminGeneral(torneos, torneoDefault);
+        } else if(choice2 == 5){
             menuPrincipal();
+        } else if(choice2 == 6){
+            System.out.println("¿Que quieres hacer?");
+            System.out.println("1 - Ver datos de un torneo.");
+            System.out.println("2 - Ver ganador de un torneo.");
+            System.out.println("3 - Listar 2 entrenadores con mas victorias y cuantas cada uno.");
+            System.out.println("4 - Listar todos los entrenadores y sus puntos.");
+            System.out.println("5 - Ver puntos de un entrenador.");
+            System.out.println("6 - Listar torneos de una region.");
+            int choiceDatosTorneo = sc.nextInt();
+            switch (choiceDatosTorneo){
+                case 1:
+                    try (MongoClient client = MongoDBConnection.conectar()) {
+                        DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
+                        dao_datosTorneoMongo.listarTodosLosTorneos();
+                        int idEleccion = sc.nextInt();
+                        dao_datosTorneoMongo.verDatosTorneo(idEleccion);
+                        mostrarMenuAdminGeneral(torneos, torneoDefault);
+                    } catch (Exception er) {
+                        System.out.println("MongoDB ha fallado");
+                    }
+
+                    break;
+
+                case 2:
+                    try (MongoClient client = MongoDBConnection.conectar()) {
+                        DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
+                        dao_datosTorneoMongo.listarTodosLosTorneos();
+                        int idEleccion = sc.nextInt();
+                        dao_datosTorneoMongo.verGanadorTorneo(idEleccion);
+                        mostrarMenuAdminGeneral(torneos, torneoDefault);
+                    } catch (Exception er) {
+                        System.out.println("MongoDB ha fallado");
+                    }
+                    break;
+
+                case 3:
+                    mostrarMenuAdminGeneral(torneos, torneoDefault);
+                    break;
+
+                case 4:
+                    mostrarMenuAdminGeneral(torneos, torneoDefault);
+                    break;
+
+                case 5:
+                    try (MongoClient client = MongoDBConnection.conectar()) {
+                        DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
+                        System.out.println("Introduce el id del entrenador:");
+                        int idEleccion = sc.nextInt();
+                        dao_datosTorneoMongo.verPuntosEntrenador(idEleccion);
+                        mostrarMenuAdminGeneral(torneos, torneoDefault);
+                    } catch (Exception er) {
+                        System.out.println("MongoDB ha fallado");
+                    }
+                    break;
+
+                case 6:
+                    try (MongoClient client = MongoDBConnection.conectar()) {
+                        DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
+                        dao_datosTorneoMongo.listarTodosLosTorneos();
+                        System.out.println("Introduce la letra de la region:");
+                        System.out.println("A - ASIA | E - EMEA | C - CHINA | P - PACIFICO");
+                        String region = sc.next();
+                        dao_datosTorneoMongo.listarTorneosPorRegion(region.toUpperCase());
+                        mostrarMenuAdminGeneral(torneos, torneoDefault);
+                    } catch (Exception er) {
+                        System.out.println("MongoDB ha fallado");
+                    }
+                    break;
+            }
         }
     }
 
@@ -369,7 +471,6 @@ public class Menus {
         if (eleccion == 3) {
             cerrarPrograma();
         }
-
     }
 
     /**
@@ -385,7 +486,6 @@ public class Menus {
         System.out.println("4 -> Exportar los datos de uno de mis torneos.");
         System.out.println("5 -> Salir.");
         System.out.println("---------------------------------------------------------------");
-
 
         Scanner sc = new Scanner(System.in);
         int eleccion = sc.nextInt();
@@ -421,6 +521,7 @@ public class Menus {
             for (int i = 0; i < misTorneos.size(); i++) {
                 System.out.println((i + 1) + " " + misTorneos.get(i).getNombre());
             }
+
             int eleccionTorneo = sc.nextInt();
             Torneo torneoAApuntar = misTorneos.get(eleccionTorneo - 1);
 
@@ -630,43 +731,61 @@ public class Menus {
                            System.out.println("El ganador del torneo es " + entrenadorServices.obtenerEntrenadorPorId(e.getKey())
                                    .getNombre() + "!");
                             carnetServices.actualizarCarnet(cGanador);
+
+                            try (MongoClient client = MongoDBConnection.conectar()) {
+                                DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
+                                dao_datosTorneoMongo.insertarTorneoMongo(torneoAPelear, entrenadorServices.obtenerEntrenadorPorId(e.getKey()).getId() , UsuarioActivo.getInstancia().getId(), combateEntrenadoresEspecifico);
+                            } catch (Exception er) {
+                                System.out.println(er.getMessage());
+                            }
                             mostrarMenuAdministradorTorneos();
                         }
                     }
 
                     int gambleo = rm.nextInt(3);
-
+                    long idGanador = -1;
                     if(gambleo == 0){
                         Carnet cGanador = carnetServices.obtenerCarnetPorId(combateEntrenadoresEspecifico.get(0).getIdEntrenador1());
                         cGanador.setPuntos(cGanador.getPuntos() + torneoAPelear.getPuntosVictoria());
                         System.out.println();
                         carnetServices.actualizarCarnet(cGanador);
+                        idGanador = combateEntrenadoresEspecifico.get(0).getIdEntrenador1();
                         System.out.println("El ganador del torneo es " + entrenadorServices.obtenerEntrenadorPorId(combateEntrenadoresEspecifico.get(0).getIdEntrenador1()).getNombre() + "!");
-                        mostrarMenuAdministradorTorneos();
+
+
                     } else if( gambleo == 1){
                         Carnet cGanador = carnetServices.obtenerCarnetPorId(combateEntrenadoresEspecifico.get(1).getIdEntrenador2());
                         cGanador.setPuntos(cGanador.getPuntos() + torneoAPelear.getPuntosVictoria());
                         System.out.println();
                         carnetServices.actualizarCarnet(cGanador);
+                        idGanador = combateEntrenadoresEspecifico.get(1).getIdEntrenador2();
                         System.out.println("El ganador del torneo es " + entrenadorServices.obtenerEntrenadorPorId(combateEntrenadoresEspecifico.get(1).getIdEntrenador2())
                                 .getNombre() + "!");
-                        mostrarMenuAdministradorTorneos();
+
                     } else {
                         Carnet cGanador = carnetServices.obtenerCarnetPorId(combateEntrenadoresEspecifico.get(2).getIdEntrenador1());
                         cGanador.setPuntos(cGanador.getPuntos() + torneoAPelear.getPuntosVictoria());
                         System.out.println();
                         carnetServices.actualizarCarnet(cGanador);
+                        idGanador = combateEntrenadoresEspecifico.get(2).getIdEntrenador1();
                         System.out.println("El ganador del torneo es " + entrenadorServices.obtenerEntrenadorPorId(combateEntrenadoresEspecifico.get(2).getIdEntrenador1())
                                 .getNombre() + "!");
-                        mostrarMenuAdministradorTorneos();
+
                     }
+
+                    try (MongoClient client = MongoDBConnection.conectar()) {
+                        DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
+                        dao_datosTorneoMongo.insertarTorneoMongo(torneoAPelear, idGanador, UsuarioActivo.getInstancia().getId(), combateEntrenadoresEspecifico);
+                    } catch (Exception er) {
+                        System.out.println("MongoDB ha fallado");
+                    }
+                    mostrarMenuAdministradorTorneos();
                 }
+
             } else {
                 System.out.println("Este torneo ya ha terminado");
                 mostrarMenuAdministradorTorneos();
             }
-
-            
     }
 
 }
