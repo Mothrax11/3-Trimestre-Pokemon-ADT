@@ -121,7 +121,7 @@ public class Menus {
             ShowNations.show();
             String nac = sc.next();
 
-            while (!autenticator.existeNacionalidad(nac)) {
+            while (!autenticator.existeNacionalidad(nac.toUpperCase())) {
                 System.out.println("Eliga una nacionalidad de la lista");
                 ShowNations.show();
                 nac = sc.next();
@@ -141,7 +141,7 @@ public class Menus {
                 System.out.println("Nacionalidad: ");
                 nac = sc.next();
 
-                while (!autenticator.existeNacionalidad(nac)) {
+                while (!autenticator.existeNacionalidad(nac.toUpperCase())) {
                     System.out.println("Eliga una nacionalidad de la lista");
                     ShowNations.show();
                     nac = sc.next();
@@ -176,7 +176,7 @@ public class Menus {
             ShowNations.show();
             String nac = sc.next();
 
-            while (!autenticator.existeNacionalidad(nac)) {
+            while (!autenticator.existeNacionalidad(nac.toUpperCase())) {
                 System.out.println("Eliga una nacionalidad de la lista");
                 ShowNations.show();
                 nac = sc.next();
@@ -196,7 +196,7 @@ public class Menus {
                 System.out.println("Nacionalidad: ");
                 nac = sc.next();
 
-                while (!autenticator.existeNacionalidad(nac)) {
+                while (!autenticator.existeNacionalidad(nac.toUpperCase())) {
                     System.out.println("Eliga una nacionalidad de la lista");
                     ShowNations.show();
                     nac = sc.next();
@@ -407,11 +407,23 @@ public class Menus {
                     break;
 
                 case 3:
-                    mostrarMenuAdminGeneral(torneos, torneoDefault);
+                    try (MongoClient client = MongoDBConnection.conectar()) {
+                        DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
+                        dao_datosTorneoMongo.obtenerTop2Entrenadores();
+                        mostrarMenuAdminGeneral(torneos, torneoDefault);
+                    } catch (Exception er) {
+                        System.out.println("MongoDB ha fallado");
+                    }
                     break;
 
                 case 4:
-                    mostrarMenuAdminGeneral(torneos, torneoDefault);
+                    try (MongoClient client = MongoDBConnection.conectar()) {
+                        DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
+                        dao_datosTorneoMongo.listarEntrenadoresYPuntos();
+                        mostrarMenuAdminGeneral(torneos, torneoDefault);
+                    } catch (Exception er) {
+                        System.out.println("MongoDB ha fallado");
+                    }
                     break;
 
                 case 5:
@@ -419,7 +431,7 @@ public class Menus {
                         DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
                         System.out.println("Introduce el id del entrenador:");
                         int idEleccion = sc.nextInt();
-                        dao_datosTorneoMongo.verPuntosEntrenador(idEleccion);
+                        dao_datosTorneoMongo.verPuntosEntrenador((long)idEleccion);
                         mostrarMenuAdminGeneral(torneos, torneoDefault);
                     } catch (Exception er) {
                         System.out.println("MongoDB ha fallado");
@@ -484,7 +496,8 @@ public class Menus {
         System.out.println("2 -> Añadir a un entrenador a uno de mis torneos.");
         System.out.println("3 -> Pelear.");
         System.out.println("4 -> Exportar los datos de uno de mis torneos.");
-        System.out.println("5 -> Salir.");
+        System.out.println("5 -> Cerrar sesion.");
+        System.out.println("6 -> Salir.");
         System.out.println("---------------------------------------------------------------");
 
         Scanner sc = new Scanner(System.in);
@@ -610,6 +623,10 @@ public class Menus {
             int eleccionTorneoExportar = sc.nextInt();
             ArchivadorTorneos.Archivador(misTorneos.get(eleccionTorneoExportar - 1));
             System.out.println("El torneo " + misTorneos.get(eleccionTorneoExportar - 1).getNombre()  + "exportado con exito!");
+        } else if(eleccion == 5){
+            menuPrincipal();
+        } else if(eleccion == 6){
+            cerrarPrograma();
         }
     }
 
@@ -620,7 +637,6 @@ public class Menus {
     }
 
     public void pelear(){
-
         System.out.println("En que torneo quieres que se pelee?");
         List<TorneoAdministrador> allTorneos = torneoAdministradorServices.obtenerTodosLosTorneoAdministradores();
         List<Torneo> misTorneos = new ArrayList<>();
@@ -735,6 +751,7 @@ public class Menus {
                             try (MongoClient client = MongoDBConnection.conectar()) {
                                 DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
                                 dao_datosTorneoMongo.insertarTorneoMongo(torneoAPelear, entrenadorServices.obtenerEntrenadorPorId(e.getKey()).getId() , UsuarioActivo.getInstancia().getId(), combateEntrenadoresEspecifico);
+                                dao_datosTorneoMongo.insertarOActualizarPuntosEntrenador(entrenadorServices.obtenerEntrenadorPorId(e.getKey()).getId(), torneoAPelear.getPuntosVictoria());
                             } catch (Exception er) {
                                 System.out.println(er.getMessage());
                             }
@@ -776,6 +793,7 @@ public class Menus {
                     try (MongoClient client = MongoDBConnection.conectar()) {
                         DAO_DatosTorneoMongo dao_datosTorneoMongo = new DAO_DatosTorneoMongo(client);
                         dao_datosTorneoMongo.insertarTorneoMongo(torneoAPelear, idGanador, UsuarioActivo.getInstancia().getId(), combateEntrenadoresEspecifico);
+                        dao_datosTorneoMongo.insertarOActualizarPuntosEntrenador(idGanador, (double)torneoAPelear.getPuntosVictoria());
                     } catch (Exception er) {
                         System.out.println("MongoDB ha fallado");
                     }
